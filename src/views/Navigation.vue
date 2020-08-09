@@ -1,0 +1,55 @@
+<template lang="pug">
+  v-app-bar(app dark)
+    nav
+      ol
+        li(v-for="route of routes" :key="route.path")
+          router-link(:to="route.path") {{ route.name }}
+</template>
+
+<script>
+import { routes } from "../router";
+export default {
+  computed: {
+    routes() {
+      return routes;
+    }
+  }
+};
+</script>
+
+<style lang="scss" scoped>
+nav {
+  width: 100%;
+
+  & > ol {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    list-style-type: none;
+    padding: 0;
+
+    & > li {
+      display: flex;
+      align-items: center;
+      padding: 0 5px 0 0;
+
+      &:not(:last-child)::after {
+        content: "|";
+        padding: 5px;
+      }
+
+      & > a,
+      & > a:visited {
+        color: whitesmoke;
+        font-weight: 800;
+        text-decoration: none;
+      }
+
+      & > a.router-link-exact-active,
+      & > a:hover {
+        text-decoration: underline;
+      }
+    }
+  }
+}
+</style>
