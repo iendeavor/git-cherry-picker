@@ -19,6 +19,11 @@ export default {
     branches: {}
   },
   mutations: {
+    reset: state => {
+      state.repos = {};
+      state.commits = {};
+      state.branches = {};
+    },
     setRepos: (state, { owner, repos }) => {
       state.repos[owner] = repos;
     },

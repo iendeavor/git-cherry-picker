@@ -1,8 +1,6 @@
-import { IS_PRODUCTION } from "../config";
-
 export default {
   state: {
-    token: IS_PRODUCTION ? null : process.env.TEST_TOKEN
+    token: null
   },
   mutations: {
     setToken: (state, { token }) => {
