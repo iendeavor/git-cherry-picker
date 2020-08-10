@@ -1,20 +1,28 @@
 import Vue from "vue";
 import Vuex from "vuex";
 
-import auth from "./auth";
 import repo from "./repo";
-import { REPOSITORY_HOST } from "../config";
+import { REPOSITORY_HOST } from "@/config";
 
 Vue.use(Vuex);
 
 export default new Vuex.Store({
   state: {
-    host: REPOSITORY_HOST.github
+    host: window.localStorage.getItem("host") || REPOSITORY_HOST.github,
+    token: window.localStorage.getItem("token") || ""
   },
-  mutations: {},
+  mutations: {
+    setHost(state, { host }) {
+      state.host = host;
+      window.localStorage.setItem("host", host);
+    },
+    setToken: (state, { token }) => {
+      state.token = token;
+      window.localStorage.setItem("token", token);
+    }
+  },
   actions: {},
   modules: {
-    auth,
     repo
   }
 });

@@ -2,7 +2,7 @@ let getRepos = () => {};
 let getBranches = () => {};
 let getCommits = () => {};
 
-import("../service")
+import("@/service")
   .then(module => {
     getRepos = module.getRepos;
     getBranches = module.getBranches;

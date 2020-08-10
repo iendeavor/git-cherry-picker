@@ -10413,6 +10413,11 @@ void-elements@^2.0.1:
   resolved "https://registry.yarnpkg.com/void-elements/-/void-elements-2.0.1.tgz#c066afb582bb1cb4128d60ea92392e94d5e9dbec"
   integrity sha1-wGavtYK7HLQSjWDqkjkulNXp2+w=
 
+vue-chronos@^2.0.0-alpha.1:
+  version "2.0.0-alpha.1"
+  resolved "https://registry.yarnpkg.com/vue-chronos/-/vue-chronos-2.0.0-alpha.1.tgz#43b5794f4abd8902b56f9eb8c99d06fdbb6f77fe"
+  integrity sha512-JYDYJQDhl7aGlAZCRjF95pt7eBX27y7sW31Fc731poVhZcnARWYHhxoeCEOSNg09jK98hTwU40oJfGVBZVL0VQ==
+
 vue-cli-plugin-pug@~1.0.7:
   version "1.0.7"
   resolved "https://registry.yarnpkg.com/vue-cli-plugin-pug/-/vue-cli-plugin-pug-1.0.7.tgz#6ba0b3d402fdae80c0e788323df63fb9ea2e1598"

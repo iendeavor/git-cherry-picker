@@ -2,12 +2,12 @@ import { error } from "@/helper";
 import Axios from "axios";
 
 export const setup = ({ token }) => {
-  Axios.defaults.baseURL = "https://api.github.com";
-  Axios.defaults.headers.common["Authorization"] = `token ${token}`;
+  Axios.defaults.baseURL = "https://gitlab.com/api/v4";
+  Axios.defaults.headers.common["PRIVATE-TOKEN"] = token;
 };
 
 export const getRepos = ({ owner, page = 1, perPage = 30 }) => {
-  const uri = `users/${owner}/repos`;
+  const uri = `groups/${encodeURIComponent(owner)}/projects`;
   const params = {
     page,
     per_page: perPage
@@ -25,8 +25,8 @@ export const getRepos = ({ owner, page = 1, perPage = 30 }) => {
     });
 };
 
-export const getCommits = ({ owner, repo }) => {
-  const uri = `repos/${owner}/${repo}/commits`;
+export const getCommits = ({ repo }) => {
+  const uri = `projects/${repo}/repository/commits`;
   return Axios.get(uri)
     .then(response => {
       return response.data;
@@ -37,8 +37,8 @@ export const getCommits = ({ owner, repo }) => {
     });
 };
 
-export const getBranches = ({ owner, repo }) => {
-  const uri = `repos/${owner}/${repo}/branches`;
+export const getBranches = ({ repo }) => {
+  const uri = `projects/${repo}/repository/branches`;
   return Axios.get(uri)
     .then(response => {
       return response.data;

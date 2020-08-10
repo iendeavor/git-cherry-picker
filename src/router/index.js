@@ -1,6 +1,6 @@
 import Vue from "vue";
 import VueRouter from "vue-router";
-import Home from "../views/Home.vue";
+import Home from "@/views/Home.vue";
 
 Vue.use(VueRouter);
 
@@ -17,7 +17,9 @@ export const routes = [
     // this generates a separate chunk (cherry-pick.[hash].js) for this route
     // which is lazy-loaded when the route is visited.
     component: () =>
-      import(/* webpackChunkName: "cherry-pick" */ "../views/CherryPick.vue")
+      import(
+        /* webpackChunkName: "cherry-pick" */ "@/views/cherry-pick/index.vue"
+      )
   },
   {
     path: "/setting",
@@ -26,7 +28,7 @@ export const routes = [
     // this generates a separate chunk (setting.[hash].js) for this route
     // which is lazy-loaded when the route is visited.
     component: () =>
-      import(/* webpackChunkName: "setting" */ "../views/Setting.vue")
+      import(/* webpackChunkName: "setting" */ "@/views/setting/index.vue")
   }
 ];
 
