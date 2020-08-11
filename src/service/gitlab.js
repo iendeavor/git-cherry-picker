@@ -10,7 +10,7 @@ export const getRepos = ({ owner, page = 1, perPage = 30 }) => {
   const uri = `groups/${encodeURIComponent(owner)}/projects`;
   const params = {
     page,
-    per_page: perPage
+    per_page: perPage,
   };
 
   return Axios.get(uri, { params })

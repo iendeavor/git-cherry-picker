@@ -8,7 +8,7 @@ export const routes = [
   {
     path: "/",
     name: "Home",
-    component: Home
+    component: Home,
   },
   {
     path: "/cherry-pick",
@@ -19,7 +19,7 @@ export const routes = [
     component: () =>
       import(
         /* webpackChunkName: "cherry-pick" */ "@/views/cherry-pick/index.vue"
-      )
+      ),
   },
   {
     path: "/setting",
@@ -28,14 +28,14 @@ export const routes = [
     // this generates a separate chunk (setting.[hash].js) for this route
     // which is lazy-loaded when the route is visited.
     component: () =>
-      import(/* webpackChunkName: "setting" */ "@/views/setting/index.vue")
-  }
+      import(/* webpackChunkName: "setting" */ "@/views/setting/index.vue"),
+  },
 ];
 
 const router = new VueRouter({
   mode: "hash",
   base: process.env.BASE_URL,
-  routes
+  routes,
 });
 
 export default router;

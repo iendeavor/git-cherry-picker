@@ -12,8 +12,8 @@ export default {
   computed: {
     routes() {
       return routes;
-    }
-  }
+    },
+  },
 };
 </script>
 

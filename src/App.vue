@@ -14,14 +14,14 @@ export default {
   name: "app",
 
   components: {
-    Navigation
+    Navigation,
   },
 
   data() {
     return {
       alertVisible: false,
       alertColor: null,
-      alertMessage: null
+      alertMessage: null,
     };
   },
 
@@ -34,7 +34,7 @@ export default {
       setTimeout(() => {
         this.alertVisible = false;
       }, 1000);
-    }
-  }
+    },
+  },
 };
 </script>

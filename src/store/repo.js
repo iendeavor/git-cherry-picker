@@ -16,7 +16,7 @@ export default {
   state: {
     repos: {},
     commits: {},
-    branches: {}
+    branches: {},
   },
   mutations: {
     reset: state => {
@@ -32,7 +32,7 @@ export default {
     },
     setBranches: (state, { owner, repo, branches }) => {
       state.branches[`${owner}/${repo}`] = branches;
-    }
+    },
   },
   actions: {
     fetchRepos: async ({ state, commit }, { owner }) => {
@@ -40,7 +40,7 @@ export default {
 
       const payload = {
         owner,
-        repos: await getRepos({ owner })
+        repos: await getRepos({ owner }),
       };
       commit("setRepos", payload);
     },
@@ -48,7 +48,7 @@ export default {
       const payload = {
         owner,
         repo,
-        repose: await getBranches({ owner, repo })
+        repose: await getBranches({ owner, repo }),
       };
       commit("setBranches", payload);
     },
@@ -56,9 +56,9 @@ export default {
       const payload = {
         owner,
         repo,
-        repose: await getCommits({ owner, repo })
+        repose: await getCommits({ owner, repo }),
       };
       commit("setCommits", payload);
-    }
-  }
+    },
+  },
 };

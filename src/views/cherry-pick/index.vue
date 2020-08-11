@@ -62,7 +62,7 @@ export default {
       compareRepo: undefined,
       compareBranch: undefined,
       compareRepos: [],
-      compareBranches: []
+      compareBranches: [],
     };
   },
 
@@ -71,7 +71,7 @@ export default {
       ["baseOwner", "baseRepo"],
       ["baseRepo", "baseBranch"],
       ["compareOwner", "compareRepo"],
-      ["compareRepo", "compareBranch"]
+      ["compareRepo", "compareBranch"],
     ];
   },
 
@@ -84,7 +84,7 @@ export default {
       promise.then(response => {
         this.baseRepos = response.map(item => ({
           text: item.name,
-          value: this.$store.state.host === "github" ? item.name : item.id
+          value: this.$store.state.host === "github" ? item.name : item.id,
         }));
       });
 
@@ -100,7 +100,7 @@ export default {
       promise.then(response => {
         this.compareRepos = response.map(item => ({
           text: item.name,
-          value: this.$store.state.host === "github" ? item.name : item.id
+          value: this.$store.state.host === "github" ? item.name : item.id,
         }));
       });
 
@@ -117,7 +117,7 @@ export default {
       promise.then(response => {
         this.baseBranches = response.map(item => ({
           text: item.name,
-          value: item.name
+          value: item.name,
         }));
       });
 
@@ -134,7 +134,7 @@ export default {
       promise.then(response => {
         this.compareBranches = response.map(item => ({
           text: item.name,
-          value: item.name
+          value: item.name,
         }));
       });
 
@@ -159,7 +159,7 @@ export default {
       this.compareBranch = branch;
       this.compareRepos = repos;
       this.compareBranches = branches;
-    }
-  }
+    },
+  },
 };
 </script>

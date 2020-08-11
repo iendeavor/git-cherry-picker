@@ -4,7 +4,7 @@ module.exports = {
   publicPath:
     process.env.NODE_ENV === "production" ? "/git-cherry-picker/" : "/",
   configureWebpack: {
-    plugins: [new Dotenv()]
+    plugins: [new Dotenv()],
   },
-  transpileDependencies: ["vuetify"]
+  transpileDependencies: ["vuetify"],
 };

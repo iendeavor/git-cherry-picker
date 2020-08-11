@@ -19,21 +19,21 @@ import Alert from "@/components/alert";
 
 export default {
   components: {
-    Alert
+    Alert,
   },
   data() {
     return {
       token: "",
-      host: this.$store.state.host
+      host: this.$store.state.host,
     };
   },
   computed: {
     repositoryHostList() {
       return Object.keys(REPOSITORY_HOST).map(key => ({
         text: key,
-        value: REPOSITORY_HOST[key]
+        value: REPOSITORY_HOST[key],
       }));
-    }
+    },
   },
   methods: {
     setToken() {
@@ -46,8 +46,8 @@ export default {
       this.$store.commit("setHost", { host: this.host });
       this.$store.commit("reset");
       this.$refs.hostAlert.alert();
-    }
-  }
+    },
+  },
 };
 </script>
 

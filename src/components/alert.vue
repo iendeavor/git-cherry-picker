@@ -9,17 +9,17 @@ export default {
   props: {
     icon: {
       default: null,
-      type: String
+      type: String,
     },
     timeout: {
       default: 1000,
-      type: Number
-    }
+      type: Number,
+    },
   },
 
   data() {
     return {
-      visible: false
+      visible: false,
     };
   },
 
@@ -30,7 +30,7 @@ export default {
       setTimeout(() => {
         this.visible = false;
       }, this.timeout);
-    }
-  }
+    },
+  },
 };
 </script>

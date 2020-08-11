@@ -9,7 +9,7 @@ Vue.use(Vuex);
 export default new Vuex.Store({
   state: {
     host: window.localStorage.getItem("host") || REPOSITORY_HOST.github,
-    token: window.localStorage.getItem("token") || ""
+    token: window.localStorage.getItem("token") || "",
   },
   mutations: {
     setHost(state, { host }) {
@@ -19,10 +19,10 @@ export default new Vuex.Store({
     setToken: (state, { token }) => {
       state.token = token;
       window.localStorage.setItem("token", token);
-    }
+    },
   },
   actions: {},
   modules: {
-    repo
-  }
+    repo,
+  },
 });

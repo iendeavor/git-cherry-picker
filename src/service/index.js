@@ -15,11 +15,11 @@ store.watch(
     }
 
     const config = {
-      token: store.state.token
+      token: store.state.token,
     };
     Git.setup(config);
   },
-  { immediate: true }
+  { immediate: true },
 );
 
 export const getRepos = ({ owner }) => {
