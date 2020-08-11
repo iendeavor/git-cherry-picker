@@ -29,7 +29,17 @@ export const getCommits = ({ owner, repo }) => {
   const uri = `repos/${owner}/${repo}/commits`;
   return Axios.get(uri)
     .then(response => {
-      return response.data;
+      return response.data.map(commit => ({
+        sha: commit.sha,
+        authorName: commit.commit.author.name,
+        authorEmail: commit.commit.author.email,
+        title: commit.commit.message.split("\n")[0],
+        message: commit.commit.message
+          .split("\n")
+          .slice(1)
+          .join("\n")
+          .trim(),
+      }));
     })
     .catch(err => {
       error(err);
