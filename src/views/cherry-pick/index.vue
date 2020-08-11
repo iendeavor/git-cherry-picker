@@ -1,39 +1,47 @@
 <template lang="pug">
-  v-container( fluid )
+  v-container
     v-row
       v-col
         v-row.d-flex.flex-column
           v-col.d-flex.justify-center
-            b Source
+            b Base
 
           v-col
-            v-text-field( :disabled="$chronos.sourceOwner.$sending" v-model="sourceOwner" label="Owner" @change="handleChangeSourceOwner" )
+            v-text-field( :disabled="$chronos.baseOwner.$sending" v-model="baseOwner" label="Owner" @change="handleChangeBaseOwner" )
 
           v-col
-            v-select( :disabled="$chronos.sourceRepo.$sending" :loading="$chronos.sourceRepo.$receiving" v-model="sourceRepo" label="Repo" :items="sourceRepos" clearable @change="handleChangeSourceRepo" )
+            v-select( :disabled="$chronos.baseRepo.$sending" :loading="$chronos.baseRepo.$receiving" v-model="baseRepo" label="Repo" :items="baseRepos" clearable @change="handleChangeBaseRepo" )
 
           v-col
-            v-select( :disabled="$chronos.sourceBranch.$sending" :loading="$chronos.sourceBranch.$receiving" v-model="sourceBranch" label="Branch" :items="sourceBranches" clearable )
+            v-select( :disabled="$chronos.baseBranch.$sending" :loading="$chronos.baseBranch.$receiving" v-model="baseBranch" label="Branch" :items="baseBranches" clearable )
 
-      v-col.d-flex.align-center( cols="2" )
-        v-row
-          v-col.d-flex.justify-center( cols="12" )
-            v-btn( :disabled="$chronos.$pending" @click="swapSourceAndTarget" )
+      v-col.d-flex.align-between( cols="12" md="2" )
+        v-row.d-flex.d-md-none
+          v-col.d-flex.justify-center.align-start.pb-0
+            v-icon mdi-arrow-up
+          v-col.d-flex.justify-center.pt-0
+            v-btn( :disabled="$chronos.$pending" @click="swapBaseAndCompare" )
+              v-icon mdi-swap-vertical
+        v-row.flex-column.d-none.d-md-flex
+          v-col.d-flex.justify-center.align-start.pb-0
+            v-icon mdi-arrow-left
+          v-col.d-flex.justify-center.pt-0
+            v-btn( :disabled="$chronos.$pending" @click="swapBaseAndCompare" )
               v-icon mdi-swap-horizontal
 
       v-col
         v-row.d-flex.flex-column
           v-col.d-flex.justify-center
-            b Target
+            b Compare
 
           v-col
-            v-text-field( :disabled="$chronos.targetOwner.$sending" v-model="targetOwner" label="Owner" @change="handleChangeTargetOwner" )
+            v-text-field( :disabled="$chronos.compareOwner.$sending" v-model="compareOwner" label="Owner" @change="handleChangeCompareOwner" )
 
           v-col
-            v-select( :disabled="$chronos.targetRepo.$sending" :loading="$chronos.targetRepo.$receiving" v-model="targetRepo" label="Repo" :items="targetRepos" clearable @change="handleChangeTargetRepo" )
+            v-select( :disabled="$chronos.compareRepo.$sending" :loading="$chronos.compareRepo.$receiving" v-model="compareRepo" label="Repo" :items="compareRepos" clearable @change="handleChangeCompareRepo" )
 
           v-col
-            v-select( :disabled="$chronos.targetBranch.$sending" :loading="$chronos.targetBranch.$receiving" v-model="targetBranch" label="Branch" :items="targetBranches" clearable )
+            v-select( :disabled="$chronos.compareBranch.$sending" :loading="$chronos.compareBranch.$receiving" v-model="compareBranch" label="Branch" :items="compareBranches" clearable )
 </template>
 
 <script>
@@ -44,113 +52,113 @@ export default {
 
   data() {
     return {
-      sourceOwner: "",
-      sourceRepo: undefined,
-      sourceBranch: undefined,
-      sourceRepos: [],
-      sourceBranches: [],
+      baseOwner: "",
+      baseRepo: undefined,
+      baseBranch: undefined,
+      baseRepos: [],
+      baseBranches: [],
 
-      targetOwner: "",
-      targetRepo: undefined,
-      targetBranch: undefined,
-      targetRepos: [],
-      targetBranches: []
+      compareOwner: "",
+      compareRepo: undefined,
+      compareBranch: undefined,
+      compareRepos: [],
+      compareBranches: []
     };
   },
 
   chronos() {
     return [
-      ["sourceOwner", "sourceRepo"],
-      ["sourceRepo", "sourceBranch"],
-      ["targetOwner", "targetRepo"],
-      ["targetRepo", "targetBranch"]
+      ["baseOwner", "baseRepo"],
+      ["baseRepo", "baseBranch"],
+      ["compareOwner", "compareRepo"],
+      ["compareRepo", "compareBranch"]
     ];
   },
 
   methods: {
-    handleChangeSourceOwner() {
-      if (this.sourceOwner === "") return;
+    handleChangeBaseOwner() {
+      if (this.baseOwner === "") return;
 
-      const owner = this.sourceOwner;
+      const owner = this.baseOwner;
       const promise = getRepos({ owner });
       promise.then(response => {
-        this.sourceRepos = response.map(item => ({
+        this.baseRepos = response.map(item => ({
           text: item.name,
           value: this.$store.state.host === "github" ? item.name : item.id
         }));
       });
 
-      this.$chronos.$load("sourceOwner", promise);
+      this.$chronos.$load("baseOwner", promise);
     },
 
-    handleChangeTargetOwner() {
-      if (this.targetOwner === "") return;
+    handleChangeCompareOwner() {
+      if (this.compareOwner === "") return;
 
-      const owner = this.targetOwner;
+      const owner = this.compareOwner;
 
       const promise = getRepos({ owner });
       promise.then(response => {
-        this.targetRepos = response.map(item => ({
+        this.compareRepos = response.map(item => ({
           text: item.name,
           value: this.$store.state.host === "github" ? item.name : item.id
         }));
       });
 
-      this.$chronos.$load("targetOwner", promise);
+      this.$chronos.$load("compareOwner", promise);
     },
 
-    handleChangeSourceRepo() {
-      if (this.sourceRepo === undefined) return;
+    handleChangeBaseRepo() {
+      if (this.baseRepo === undefined) return;
 
-      const owner = this.sourceOwner;
-      const repo = this.sourceRepo;
+      const owner = this.baseOwner;
+      const repo = this.baseRepo;
 
       const promise = getBranches({ owner, repo });
       promise.then(response => {
-        this.sourceBranches = response.map(item => ({
+        this.baseBranches = response.map(item => ({
           text: item.name,
           value: item.name
         }));
       });
 
-      this.$chronos.$load("sourceRepo", promise);
+      this.$chronos.$load("baseRepo", promise);
     },
 
-    handleChangeTargetRepo() {
-      if (this.targetRepo === undefined) return;
+    handleChangeCompareRepo() {
+      if (this.compareRepo === undefined) return;
 
-      const owner = this.targetOwner;
-      const repo = this.targetRepo;
+      const owner = this.compareOwner;
+      const repo = this.compareRepo;
 
       const promise = getBranches({ owner, repo });
       promise.then(response => {
-        this.targetBranches = response.map(item => ({
+        this.compareBranches = response.map(item => ({
           text: item.name,
           value: item.name
         }));
       });
 
-      this.$chronos.$load("targetRepo", promise);
+      this.$chronos.$load("compareRepo", promise);
     },
 
-    swapSourceAndTarget() {
-      const owner = this.sourceOwner;
-      const repo = this.sourceRepo;
-      const branch = this.sourceBranch;
-      const repos = this.sourceRepos;
-      const branches = this.sourceBranches;
+    swapBaseAndCompare() {
+      const owner = this.baseOwner;
+      const repo = this.baseRepo;
+      const branch = this.baseBranch;
+      const repos = this.baseRepos;
+      const branches = this.baseBranches;
 
-      this.sourceOwner = this.targetOwner;
-      this.sourceRepo = this.targetRepo;
-      this.sourceBranch = this.targetBranch;
-      this.sourceRepos = this.targetRepos;
-      this.sourceBranches = this.targetBranches;
+      this.baseOwner = this.compareOwner;
+      this.baseRepo = this.compareRepo;
+      this.baseBranch = this.compareBranch;
+      this.baseRepos = this.compareRepos;
+      this.baseBranches = this.compareBranches;
 
-      this.targetOwner = owner;
-      this.targetRepo = repo;
-      this.targetBranch = branch;
-      this.targetRepos = repos;
-      this.targetBranches = branches;
+      this.compareOwner = owner;
+      this.compareRepo = repo;
+      this.compareBranch = branch;
+      this.compareRepos = repos;
+      this.compareBranches = branches;
     }
   }
 };
