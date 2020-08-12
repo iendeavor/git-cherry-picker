@@ -19,7 +19,7 @@
 
     v-row
       v-col.py-0
-        v-card.mb-4.px-2.py-2.grey.lighten-2( v-for="commit of compareCommits" :key="commit.sha" )
+        v-card.mb-2.pa-3( v-for="commit of compareCommits" :key="commit.sha" )
           h4.mb-2 {{ commit.title }}
           div( v-if="commit.message" v-for="(text, index) of commit.message.split('\\n')" :key="index") {{ text }}
           div

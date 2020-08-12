@@ -1,7 +1,7 @@
 <template lang="pug">
   v-app
     navigation
-    v-main
+    v-main.grey.lighten-4
       v-alert( :value="alertVisible" :color="alertColor" transition="scale-transition" )
         div {{ alertMessage }}
       router-view( @v-alert="alert" )
