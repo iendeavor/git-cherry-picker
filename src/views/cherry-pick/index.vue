@@ -6,7 +6,7 @@
           v-col.d-flex.justify-center.py-0
             b Base
 
-          owner-repo-commit(v-model="baseCommits")
+          owner-repo-commit(v-model="baseCommits" @loading="() => ++loading" @unloading="() => --loading")
 
       v-col( sm="1" )
 
@@ -15,11 +15,12 @@
           v-col.d-flex.justify-center.py-0
             b Compare
 
-          owner-repo-commit(v-model="compareCommits")
+          owner-repo-commit(v-model="compareCommits" @loading="() => ++loading" @unloading="() => --loading")
 
     v-row
       v-col.py-0
-        v-card.mb-2.pa-3( v-for="commit of diffCommits" :key="commit.sha" )
+        v-progress-linear( v-if="loading !== 0" indeterminate color="primary" )
+        v-card.mt-2.pa-3( v-for="commit of diffCommits" :key="commit.sha" )
           h4.mb-2 {{ commit.title }}
           div( v-if="commit.message" v-for="(text, index) of commit.message.split('\\n')" :key="index") {{ text }}
           div
@@ -44,6 +45,7 @@ export default {
     return {
       baseCommits: [],
       compareCommits: [],
+      loading: 0,
     };
   },
 

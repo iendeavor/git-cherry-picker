@@ -39,6 +39,7 @@ export default {
     return [
       ["owner", "repo"],
       ["repo", "branch"],
+      ["branch", "commit"],
     ];
   },
 
@@ -82,7 +83,7 @@ export default {
 
     branch: {
       immediate: true,
-      handler() {
+      async handler() {
         if (this.branch === undefined) return;
 
         const promise = getCommits({
@@ -96,7 +97,9 @@ export default {
           this.$emit("change", response);
         });
 
-        this.$chronos.$load("branch", promise);
+        this.$emit("loading");
+        await this.$chronos.$load("branch", promise);
+        this.$emit("unloading");
       },
     },
   },
