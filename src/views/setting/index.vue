@@ -1,30 +1,25 @@
 <template lang="pug">
   v-container( fluid )
     v-row.d-flex.align-center
-      v-col.d-flex.justify-center( cols="1" )
-        alert( ref="tokenAlert" icon="mdi-check")
-      v-col( cols="11" )
-        v-text-field( label="Setup Token" v-model="token" @change="setToken" placeholder="********" type="password" )
+      v-col
+        v-text-field( label="Setup Token" v-model="token" @change="setToken" :success-messages="successMessages.token" placeholder="********" type="password" )
 
-    v-row.d-flex.align-center
-      v-col.d-flex.justify-center( cols="1" )
-        alert( ref="hostAlert" icon="mdi-check")
-      v-col( cols="11" )
-        v-select( label="Setup Host" v-model="host" :items="repositoryHostList" @change="setHost" )
+      v-col
+        v-select( label="Setup Host" v-model="host" :items="repositoryHostList" :success-messages="successMessages.host" @change="setHost" )
 </template>
 
 <script>
 import { REPOSITORY_HOST } from "@/config/index";
-import Alert from "@/components/alert";
 
 export default {
-  components: {
-    Alert,
-  },
   data() {
     return {
       token: "",
       host: this.$store.state.host,
+      successMessages: {
+        token: [],
+        host: [],
+      },
     };
   },
   computed: {
@@ -40,12 +35,18 @@ export default {
       this.$store.commit("setToken", { token: this.token });
       this.$store.commit("reset");
       this.token = "";
-      this.$refs.tokenAlert.alert();
+      this.successMessages.token = ["Saved"];
+      setTimeout(() => {
+        this.successMessages.token = [];
+      }, 1000);
     },
     setHost() {
       this.$store.commit("setHost", { host: this.host });
       this.$store.commit("reset");
-      this.$refs.hostAlert.alert();
+      this.successMessages.host = ["Saved"];
+      setTimeout(() => {
+        this.successMessages.host = [];
+      }, 1000);
     },
   },
 };
