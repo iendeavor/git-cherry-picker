@@ -22,14 +22,30 @@ store.watch(
   { immediate: true },
 );
 
-export const getRepos = ({ owner }) => {
-  return Git.getRepos({ owner });
+export const getRepos = ({ owner, page, perPage }) => {
+  return Git.getRepos({ owner, page, perPage });
 };
 
-export const getCommits = ({ owner, repo }) => {
-  return Git.getCommits({ owner, repo });
+export const getCommits = ({
+  repo,
+  branch,
+  since,
+  until,
+  all,
+  page,
+  perPage,
+}) => {
+  return Git.getCommits({
+    repo,
+    branch,
+    since,
+    until,
+    all,
+    page,
+    perPage,
+  });
 };
 
-export const getBranches = ({ owner, repo }) => {
-  return Git.getBranches({ owner, repo });
+export const getBranches = ({ owner, repo, page, perPage }) => {
+  return Git.getBranches({ owner, repo, page, perPage });
 };

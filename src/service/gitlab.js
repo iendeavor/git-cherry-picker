@@ -6,17 +6,20 @@ export const setup = ({ token }) => {
   Axios.defaults.headers.common["PRIVATE-TOKEN"] = token;
 };
 
-export const getRepos = ({ owner, page = 1, perPage = 30 }) => {
+export const getRepos = ({ owner, page, perPage }) => {
   const uri = `groups/${encodeURIComponent(owner)}/projects`;
-  const params = {
-    page,
-    per_page: perPage,
-  };
+  const params = {};
+  if (page !== undefined) params.page = page;
+  if (perPage !== undefined) params.per_page = perPage;
 
   return Axios.get(uri, { params })
     .then(async response => {
-      if (response.data.length === 30)
-        return response.data.concat(await getRepos({ owner, page: page + 1 }));
+      const nextPage = response.headers["x-next-page"];
+      if (nextPage)
+        return response.data.concat(
+          await getRepos({ owner, page: nextPage, perPage }),
+        );
+
       return response.data;
     })
     .catch(err => {
@@ -25,9 +28,25 @@ export const getRepos = ({ owner, page = 1, perPage = 30 }) => {
     });
 };
 
-export const getCommits = ({ repo }) => {
+export const getCommits = ({
+  repo,
+  branch,
+  since,
+  until,
+  all,
+  page,
+  perPage,
+}) => {
   const uri = `projects/${repo}/repository/commits`;
-  return Axios.get(uri)
+  const params = {};
+  if (branch !== undefined) params.ref_name = branch;
+  if (since !== undefined) params.since = since;
+  if (until !== undefined) params.until = until;
+  if (all !== undefined) params.all = all;
+  if (page !== undefined) params.page = page;
+  if (perPage !== undefined) params.per_page = perPage;
+
+  return Axios.get(uri, { params })
     .then(response => {
       return response.data.map(commit => ({
         sha: commit.id,
@@ -43,10 +62,20 @@ export const getCommits = ({ repo }) => {
     });
 };
 
-export const getBranches = ({ repo }) => {
+export const getBranches = ({ repo, page, perPage }) => {
   const uri = `projects/${repo}/repository/branches`;
-  return Axios.get(uri)
-    .then(response => {
+  const params = {};
+  if (page !== undefined) params.page = page;
+  if (perPage !== undefined) params.per_page = perPage;
+
+  return Axios.get(uri, { params })
+    .then(async response => {
+      const nextPage = response.headers["x-next-page"];
+      if (nextPage)
+        return response.data.concat(
+          await getBranches({ repo, page: nextPage, perPage }),
+        );
+
       return response.data;
     })
     .catch(err => {

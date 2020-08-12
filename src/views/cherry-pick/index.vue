@@ -19,7 +19,7 @@
 
     v-row
       v-col.py-0
-        v-card.mb-2.pa-3( v-for="commit of compareCommits" :key="commit.sha" )
+        v-card.mb-2.pa-3( v-for="commit of diffCommits" :key="commit.sha" )
           h4.mb-2 {{ commit.title }}
           div( v-if="commit.message" v-for="(text, index) of commit.message.split('\\n')" :key="index") {{ text }}
           div
@@ -45,6 +45,27 @@ export default {
       baseCommits: [],
       compareCommits: [],
     };
+  },
+
+  computed: {
+    diffCommits() {
+      return this.filterDiffShas(this.compareCommits);
+    },
+  },
+
+  methods: {
+    filterDiffShas(commits) {
+      const baseShaSet = new Set(this.baseCommits.map(commit => commit.sha));
+      const compareShaSet = new Set(
+        this.compareCommits.map(commit => commit.sha),
+      );
+      const diffShaSet = new Set(
+        Array.from(compareShaSet.values()).filter(
+          sha => baseShaSet.has(sha) === false,
+        ),
+      );
+      return commits.filter(commit => diffShaSet.has(commit.sha));
+    },
   },
 };
 </script>

@@ -10,6 +10,7 @@
 
 <script>
 import { getRepos, getBranches, getCommits } from "@/service";
+import dayjs from "dayjs";
 
 export default {
   props: {
@@ -41,57 +42,80 @@ export default {
     ];
   },
 
+  watch: {
+    owner: {
+      immediate: true,
+      handler() {
+        if (this.owner === "") return;
+
+        const promise = getRepos({ owner: this.owner });
+        promise.then(response => {
+          this.repos = response.map(item => ({
+            text: item.name,
+            value: this.$store.state.host === "github" ? item.name : item.id,
+          }));
+        });
+
+        this.$chronos.$load("owner", promise);
+      },
+    },
+
+    repo: {
+      immediate: true,
+      handler() {
+        if (this.repo === undefined) return;
+
+        const promise = getBranches({
+          owner: this.owner,
+          repo: this.repo,
+        });
+        promise.then(response => {
+          this.branches = response.map(item => ({
+            text: item.name,
+            value: item.name,
+          }));
+        });
+
+        this.$chronos.$load("repo", promise);
+      },
+    },
+
+    branch: {
+      immediate: true,
+      handler() {
+        if (this.branch === undefined) return;
+
+        const promise = getCommits({
+          repo: this.repo,
+          branch: this.branch,
+          since: dayjs().subtract(6, "month"),
+          page: 1,
+          perPage: 100,
+        });
+        promise.then(response => {
+          this.$emit("change", response);
+        });
+
+        this.$chronos.$load("branch", promise);
+      },
+    },
+  },
+
   methods: {
     handleChangeOwner() {
-      if (this.owner === "") return;
-
-      const owner = this.owner;
-
-      const promise = getRepos({ owner });
-      promise.then(response => {
-        this.repos = response.map(item => ({
-          text: item.name,
-          value: this.$store.state.host === "github" ? item.name : item.id,
-        }));
-      });
-
-      this.$chronos.$load("owner", promise);
+      this.repos = [];
+      this.repo = undefined;
+      this.handleChangeRepo();
     },
 
     handleChangeRepo() {
       this.branches = [];
-
-      if (this.repo === undefined) return;
-
-      const owner = this.owner;
-      const repo = this.repo;
-
-      const promise = getBranches({ owner, repo });
-      promise.then(response => {
-        this.branches = response.map(item => ({
-          text: item.name,
-          value: item.name,
-        }));
-      });
-
-      this.$chronos.$load("repo", promise);
+      this.branch = undefined;
+      this.handleChangeBranch();
     },
 
     handleChangeBranch() {
       this.$emit("change", []);
-
-      if (this.branch === undefined) return;
-
-      const owner = this.owner;
-      const repo = this.repo;
-      const branch = this.branch;
-
-      const promise = getCommits({ owner, repo, branch });
-      promise.then(response => {
-        this.$emit("change", response);
-      });
-
-      this.$chronos.$load("branch", promise);
     },
   },
 };
