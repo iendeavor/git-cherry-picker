@@ -1,3 +1,5 @@
+import { error } from "@/helper";
+
 let getRepos = () => {};
 let getBranches = () => {};
 let getCommits = () => {};
@@ -9,7 +11,7 @@ import("@/service")
     getCommits = module.getCommits;
   })
   .catch(err => {
-    console.error(err);
+    error(err);
   });
 
 export default {

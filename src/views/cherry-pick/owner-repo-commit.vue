@@ -1,7 +1,7 @@
 <template lang="pug">
   v-row.d-flex.flex-column
     v-col.py-0
-      v-text-field( :disabled="$chronos.owner.$sending" v-model="owner" label="Owner" @change="handleChangeOwner" )
+      v-text-field( ref="owner" :disabled="$chronos.owner.$sending" v-model="owner" label="Owner" @change="handleChangeOwner" @blur="handleBlurOwner" )
     v-col.py-0
       v-select( :disabled="$chronos.repo.$sending" :loading="$chronos.repo.$receiving" v-model="repo" label="Repo" :items="repos" clearable @change="handleChangeRepo" )
     v-col.py-0
@@ -44,26 +44,15 @@ export default {
   },
 
   watch: {
-    owner: {
-      immediate: true,
-      handler() {
-        if (this.owner === "") return;
-
-        const promise = getRepos({ owner: this.owner });
-        promise.then(response => {
-          this.repos = response.map(item => ({
-            text: item.name,
-            value: this.$store.state.host === "github" ? item.name : item.id,
-          }));
-        });
-
-        this.$chronos.$load("owner", promise);
-      },
+    "$store.state.token"() {
+      this.owner = "";
+      this.handleChangeOwner();
     },
 
     repo: {
       immediate: true,
       handler() {
+        if (this.owner === "") return;
         if (this.repo === undefined) return;
 
         const promise = getBranches({
@@ -84,9 +73,11 @@ export default {
     branch: {
       immediate: true,
       async handler() {
+        if (this.repo === undefined) return;
         if (this.branch === undefined) return;
 
         const promise = getCommits({
+          owner: this.owner,
           repo: this.repo,
           branch: this.branch,
           since: dayjs().subtract(6, "month"),
@@ -105,15 +96,28 @@ export default {
   },
 
   methods: {
+    handleBlurOwner() {
+      if (this.owner === "") return;
+      const promise = getRepos({ owner: this.owner });
+      promise.then(response => {
+        this.repos = response.map(item => ({
+          text: item.name,
+          value: this.$store.state.host === "github" ? item.name : item.id,
+        }));
+      });
+
+      this.$chronos.$load("owner", promise);
+    },
+
     handleChangeOwner() {
-      this.repos = [];
       this.repo = undefined;
+      this.repos = [];
       this.handleChangeRepo();
     },
 
     handleChangeRepo() {
-      this.branches = [];
       this.branch = undefined;
+      this.branches = [];
       this.handleChangeBranch();
     },
 

@@ -1,6 +1,7 @@
 import { error } from "@/helper";
-import Axios from "axios";
+import AxiosConstructor from "axios";
 
+const Axios = AxiosConstructor.create();
 export const setup = ({ token }) => {
   Axios.defaults.baseURL = "https://api.github.com";
   Axios.defaults.headers.common["Authorization"] = `token ${token}`;
@@ -25,9 +26,24 @@ export const getRepos = ({ owner, page = 1, perPage = 30 }) => {
     });
 };
 
-export const getCommits = ({ owner, repo }) => {
+export const getCommits = ({
+  owner,
+  repo,
+  branch,
+  since,
+  until,
+  page,
+  perPage,
+}) => {
   const uri = `repos/${owner}/${repo}/commits`;
-  return Axios.get(uri)
+  const params = {};
+  if (branch !== undefined) params.sha = encodeURIComponent(branch);
+  if (since !== undefined) params.since = since;
+  if (until !== undefined) params.until = until;
+  if (page !== undefined) params.page = page;
+  if (perPage !== undefined) params.per_page = perPage;
+
+  return Axios.get(uri, { params })
     .then(response => {
       return response.data.map(commit => ({
         sha: commit.sha,

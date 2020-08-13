@@ -27,7 +27,6 @@ export default {
 
   methods: {
     alert(type, message) {
-      console.log("handle");
       this.alertVisible = true;
       this.alertMessage = message;
       this.alertColor = "green";

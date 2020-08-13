@@ -1,6 +1,7 @@
 import { error } from "@/helper";
-import Axios from "axios";
+import AxiosConstructor from "axios";
 
+const Axios = AxiosConstructor.create();
 export const setup = ({ token }) => {
   Axios.defaults.baseURL = "https://gitlab.com/api/v4";
   Axios.defaults.headers.common["PRIVATE-TOKEN"] = token;

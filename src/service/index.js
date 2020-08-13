@@ -1,22 +1,20 @@
 import store from "@/store";
-import { REPOSITORY_HOST } from "@/config";
 import * as GitHub from "./github";
 import * as GitLab from "./gitlab";
 
+const hostToService = {
+  github: GitHub,
+  gitlab: GitLab,
+};
 let Git = GitHub;
 
 store.watch(
   state => [state.host, state.token],
   () => {
-    if (store.state.host === REPOSITORY_HOST.github) {
-      Git = GitHub;
-    } else if (store.state.host === REPOSITORY_HOST.gitlab) {
-      Git = GitLab;
-    }
+    Git = hostToService[store.state.host];
 
-    const config = {
-      token: store.state.token,
-    };
+    if (Git === undefined) return;
+    const config = { token: store.state.token };
     Git.setup(config);
   },
   { immediate: true },
@@ -27,6 +25,7 @@ export const getRepos = ({ owner, page, perPage }) => {
 };
 
 export const getCommits = ({
+  owner,
   repo,
   branch,
   since,
@@ -36,6 +35,7 @@ export const getCommits = ({
   perPage,
 }) => {
   return Git.getCommits({
+    owner,
     repo,
     branch,
     since,

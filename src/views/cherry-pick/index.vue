@@ -1,5 +1,9 @@
 <template lang="pug">
   v-container
+    v-row( v-if="!$store.state.token" )
+      v-alert.mx-auto.pa-2.ma-0( type="error" )
+        p.mb-0 Please set a host and token first.
+
     v-row.mx-auto
       v-col.py-0( cols="12" sm )
         v-row.d-flex.flex-column
