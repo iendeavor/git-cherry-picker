@@ -22,7 +22,7 @@
         v-progress-linear( v-if="loading !== 0" indeterminate color="primary" )
         v-card.mt-2.pa-3( v-for="commit of diffCommits" :key="commit.sha" )
           h4.mb-2 {{ commit.title }}
-          div( v-if="commit.message" v-for="(text, index) of commit.message.split('\\n')" :key="index") {{ text }}
+          div.pl-4( v-if="commit.message" v-for="(text, index) of commit.message.split('\\n')" :key="index") {{ text }}
           div
             span {{ commit.authorName }}
             span &nbsp;-&nbsp;
@@ -51,22 +51,49 @@ export default {
 
   computed: {
     diffCommits() {
-      return this.filterDiffShas(this.compareCommits);
+      return this.compareCommits.filter(
+        compareCommit => this.sameShaSet.has(compareCommit.sha) === false,
+      );
+    },
+
+    sameShaSet() {
+      return new Set(
+        [].concat(this.exactSameCommitShas, this.cherryPickedCommitShas),
+      );
+    },
+
+    exactSameCommitShas() {
+      return this.getExactSameCommits(
+        this.baseCommits,
+        this.compareCommits,
+      ).map(commit => commit.sha);
+    },
+
+    cherryPickedCommitShas() {
+      return this.getCherryPickedCommits(
+        this.baseCommits,
+        this.compareCommits,
+      ).map(commit => commit.sha);
     },
   },
 
   methods: {
-    filterDiffShas(commits) {
-      const baseShaSet = new Set(this.baseCommits.map(commit => commit.sha));
-      const compareShaSet = new Set(
-        this.compareCommits.map(commit => commit.sha),
+    getExactSameCommits(baseCommits, compareCommits) {
+      const baseShaSet = new Set(baseCommits.map(commit => commit.sha));
+      return compareCommits.filter(commit => baseShaSet.has(commit.sha));
+    },
+
+    getCherryPickedCommits(baseCommits, compareCommits) {
+      const getRe = sha => new RegExp(`cherry picked from commit ${sha}`);
+      const pickedShaSet = new Set(
+        compareCommits
+          .filter(compareCommit => {
+            const re = getRe(compareCommit.sha);
+            return baseCommits.some(baseCommit => re.test(baseCommit.message));
+          })
+          .map(compareCommit => compareCommit.sha),
       );
-      const diffShaSet = new Set(
-        Array.from(compareShaSet.values()).filter(
-          sha => baseShaSet.has(sha) === false,
-        ),
-      );
-      return commits.filter(commit => diffShaSet.has(commit.sha));
+      return compareCommits.filter(commit => pickedShaSet.has(commit.sha));
     },
   },
 };
