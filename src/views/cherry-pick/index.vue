@@ -151,6 +151,8 @@ export default {
     },
 
     handleClickCopy() {
+      if (this.sortedPickedShas.length === 0) return;
+
       const textarea = this.$refs.sortedPickedShas.$el.querySelector(
         "textarea",
       );
