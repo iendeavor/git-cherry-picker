@@ -22,9 +22,24 @@
           owner-repo-commit(v-model="compareCommits" @loading="() => ++loading" @unloading="() => --loading")
 
     v-row
+      v-col
+        v-textarea(
+          ref="sortedPickedShas"
+          :value="sortedPickedShas.join('\\n')"
+          label="Picked Shas (oldest first)"
+          rows="1"
+          auto-grow
+          prepend-icon="mdi-content-copy"
+          @click:prepend="handleClickCopy"
+          append-icon="mdi-close"
+          @click:append="handleClickClear"
+          :success-messages="successMessages.copy"
+          )
+
+    v-row
       v-col.py-0
         v-progress-linear( v-if="loading !== 0" indeterminate color="primary" )
-        v-card.mt-2.pa-3( v-for="commit of diffCommits" :key="commit.sha" )
+        v-card.mt-2.pa-3( v-for="commit of diffCommits" :key="commit.sha" @click="pickCommit(commit)" :class="{ grey: pickedShas.includes(commit.sha) }" )
           h4.mb-2 {{ commit.title }}
           div.pl-4( v-if="commit.message" v-for="(text, index) of commit.message.split('\\n')" :key="index") {{ text }}
           div
@@ -49,7 +64,11 @@ export default {
     return {
       baseCommits: [],
       compareCommits: [],
+      pickedShas: [],
       loading: 0,
+      successMessages: {
+        copy: [],
+      },
     };
   },
 
@@ -79,6 +98,18 @@ export default {
         this.compareCommits,
       ).map(commit => commit.sha);
     },
+
+    sortedPickedShas() {
+      const sortedPickedShas = [];
+
+      for (const commit of this.diffCommits) {
+        if (this.pickedShas.includes(commit.sha)) {
+          sortedPickedShas.push(commit.sha);
+        }
+      }
+
+      return sortedPickedShas.reverse();
+    },
   },
 
   methods: {
@@ -99,6 +130,33 @@ export default {
       );
       return compareCommits.filter(commit => pickedShaSet.has(commit.sha));
     },
+
+    pickCommit(commit) {
+      const index = this.pickedShas.indexOf(commit.sha);
+      if (index > -1) {
+        this.pickedShas.splice(index, 1);
+      } else {
+        this.pickedShas.push(commit.sha);
+      }
+    },
+
+    handleClickCopy() {
+      const textarea = this.$refs.sortedPickedShas.$el.querySelector(
+        "textarea",
+      );
+      textarea.select();
+      document.execCommand("copy");
+      document.getSelection().removeAllRanges();
+
+      this.successMessages.copy.push("Copied!");
+      setTimeout(() => {
+        this.successMessages.copy = [];
+      }, 1000);
+    },
+
+    handleClickClear() {
+      this.pickedShas = [];
+    },
   },
 };
 </script>
@@ -110,5 +168,6 @@ export default {
 
 .v-card {
   width: 100%;
+  cursor: pointer;
 }
 </style>
