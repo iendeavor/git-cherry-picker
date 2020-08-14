@@ -112,6 +112,16 @@ export default {
     },
   },
 
+  watch: {
+    diffCommits: {
+      deep: true,
+      handler() {
+        const diffShas = new Set(this.diffCommits.map(commit => commit.sha));
+        this.pickedShas = this.pickedShas.filter(sha => diffShas.has(sha));
+      },
+    },
+  },
+
   methods: {
     getExactSameCommits(baseCommits, compareCommits) {
       const baseShaSet = new Set(baseCommits.map(commit => commit.sha));
