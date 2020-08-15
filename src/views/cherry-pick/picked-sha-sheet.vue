@@ -8,7 +8,7 @@
     v-list( max-height="300" style="overflow: scroll;" )
       v-subheader.d-flex.justify-space-between( style="position: sticky;" )
         div Selected Shas
-        v-btn(icon color="blue lighten-2" @click="handleClickCopy")
+        v-btn( :disabled="shas.length === 0" icon color="blue lighten-2" @click="handleClickCopy" )
           v-icon mdi-content-copy
 
       v-list-item( v-for="sha of shas" :key="sha" )
