@@ -170,7 +170,11 @@ export default {
     },
 
     fieldsAboutCompareCommits() {
-      return [this.compareOwner, this.compareRepo, this.compareBranch];
+      return [
+        this.linkOwner ? this.baseOwner : this.compareOwner,
+        this.linkRepo ? this.baseRepo : this.compareRepo,
+        this.compareBranch,
+      ];
     },
 
     searchResult() {
