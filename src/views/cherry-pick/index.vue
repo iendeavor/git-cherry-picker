@@ -5,40 +5,66 @@
         p.mb-0 Please set a host and token first.
 
     v-row.mx-auto
-      v-col.py-0( cols="12" sm )
-        v-row.d-flex.flex-column
-          v-col.d-flex.justify-center.py-0
-            b Base
+      v-col.py-0
+        v-row.d-flex.align-center
+          v-col.d-flex.justify-center( cols="1" )
+            v-btn( icon @click="linkOwner = !linkOwner" )
+              v-icon mdi-link
 
-          owner-repo-commit(v-model="baseCommits" @loading="() => ++loading" @unloading="() => --loading")
+          template( v-if="linkOwner" )
+            v-col
+              owner( v-model="baseOwner" )
 
-      v-col( sm="1" )
+          template( v-else )
+            v-col( cols="5" )
+              owner( v-model="baseOwner" )
 
-      v-col.py-0( cols="12" sm )
-        v-row.d-flex.flex-column
-          v-col.d-flex.justify-center.py-0
-            b Compare
+            v-col( cols="1" )
 
-          owner-repo-commit(v-model="compareCommits" @loading="() => ++loading" @unloading="() => --loading")
+            v-col( cols="5" )
+              owner( v-model="compareOwner" )
+
+        v-row.d-flex.align-center
+          v-col.d-flex.justify-center( cols="1" )
+            v-btn( icon @click="linkRepo = !linkRepo" )
+              v-icon mdi-link
+
+          template( v-if="linkRepo" )
+            v-col
+              repo( v-model="baseRepo" :owner="baseOwner" )
+
+          template( v-else )
+            v-col( cols="5" )
+              repo( v-model="baseRepo" :owner="baseOwner" )
+
+            v-col( cols="1" )
+
+            v-col( cols="5" )
+              repo( v-model="compareRepo" :owner="linkOwner ? baseOwner : compareOwner" )
+
+        v-row.d-flex.align-center
+          v-col( cols="1" )
+
+          v-col( cols="5" )
+            branch( v-model="baseBranch" :owner="baseOwner" :repo="baseRepo" )
+
+          v-col.d-flex.justify-center( cols="1" )
+            v-btn( icon @click="swapBranch" )
+              v-icon mdi-swap-horizontal-bold
+
+          v-col( cols="5" )
+            branch( v-model="compareBranch" :owner="linkOwner ? baseOwner : compareOwner" :repo="linkRepo ? baseRepo : compareRepo" )
+
+          v-col( cols="1" )
 
     v-row
-      v-col
-        v-textarea(
-          ref="sortedPickedShas"
-          :value="sortedPickedShas.join('\\n')"
-          label="Picked Shas (oldest first)"
-          rows="1"
-          auto-grow
-          prepend-icon="mdi-content-copy"
-          @click:prepend="handleClickCopy"
-          append-icon="mdi-close"
-          @click:append="handleClickClear"
-          :success-messages="successMessages.copy"
-          )
+      v-col.d-flex.justify-center
+        picked-sha-sheet( v-model="sortedPickedShas" :deleteSha="deleteSha" )
+
+    v-progress-linear( v-if="loading !== 0" indeterminate color="primary" )
 
     v-row
       v-col.py-0
-        v-progress-linear( v-if="loading !== 0" indeterminate color="primary" )
         v-card.mt-2.pa-3( v-for="commit of diffCommits" :key="commit.sha" @click="pickCommit(commit)" :class="{ grey: pickedShas.includes(commit.sha) }" )
           h4.mb-2 {{ commit.title }}
           div.pl-4( v-if="commit.message" v-for="(text, index) of commit.message.split('\\n')" :key="index") {{ text }}
@@ -51,24 +77,43 @@
 </template>
 
 <script>
-import OwnerRepoCommit from "./owner-repo-commit";
+import Owner from "../../components/Owner";
+import Repo from "../../components/Repo";
+import Branch from "../../components/Branch";
+import commitsMixin from "./commits";
+import PickedShaSheet from "./picked-sha-sheet";
+import useQuery from "../../hooks/use-query";
 
 export default {
   name: "cherry-pick",
 
   components: {
-    OwnerRepoCommit,
+    Owner,
+    Repo,
+    Branch,
+    PickedShaSheet,
   },
+
+  mixins: [commitsMixin, useQuery],
 
   data() {
     return {
+      linkOwner: true,
+      baseOwner: null,
+      compareOwner: null,
+
+      linkRepo: true,
+      baseRepo: null,
+      compareRepo: null,
+
+      baseBranch: null,
+      compareBranch: null,
+
       baseCommits: [],
       compareCommits: [],
+
       pickedShas: [],
       loading: 0,
-      successMessages: {
-        copy: [],
-      },
     };
   },
 
@@ -110,6 +155,27 @@ export default {
 
       return sortedPickedShas.reverse();
     },
+
+    fieldsAboutBaseCommits() {
+      return [this.baseOwner, this.baseRepo, this.baseBranch];
+    },
+
+    fieldsAboutCompareCommits() {
+      return [this.compareOwner, this.compareRepo, this.compareBranch];
+    },
+
+    searchResult() {
+      return JSON.stringify([
+        this.baseOwner,
+        this.baseRepo,
+        this.baseBranch,
+        this.compareOwner,
+        this.compareRepo,
+        this.compareBranch,
+        this.linkOwner,
+        this.linkRepo,
+      ]);
+    },
   },
 
   watch: {
@@ -120,9 +186,84 @@ export default {
         this.pickedShas = this.pickedShas.filter(sha => diffShas.has(sha));
       },
     },
+
+    fieldsAboutBaseCommits: {
+      immediate: true,
+      deep: true,
+      async handler([owner, repo, branch]) {
+        ++this.loading;
+        this.baseCommits = await this.getCommits(owner, repo, branch);
+        --this.loading;
+      },
+    },
+
+    fieldsAboutCompareCommits: {
+      immediate: true,
+      deep: true,
+      async handler([owner, repo, branch]) {
+        ++this.loading;
+        this.compareCommits = await this.getCommits(owner, repo, branch);
+        --this.loading;
+      },
+    },
+
+    baseOwner: {
+      immediate: true,
+      handler() {
+        if (this.linkOwner) {
+          this.compareOwner = this.baseOwner;
+        }
+      },
+    },
+
+    baseRepo: {
+      immediate: true,
+      handler() {
+        if (this.linkRepo) {
+          this.compareRepo = this.baseRepo;
+        }
+      },
+    },
+
+    searchResult: {
+      handler() {
+        const object = {
+          baseOwner: this.baseOwner,
+          baseRepo: this.baseRepo,
+          baseBranch: this.baseBranch,
+          compareOwner: this.compareOwner,
+          compareRepo: this.compareRepo,
+          compareBranch: this.compareBranch,
+          linkOwner: this.linkOwner,
+          linkRepo: this.linkRepo,
+        };
+
+        this.putQuery(object);
+      },
+    },
+  },
+
+  created() {
+    const q = this.getQuery();
+    if (q) {
+      this.linkOwner = q.linkOwner;
+      this.linkRepo = q.linkRepo;
+      this.baseOwner = q.baseOwner;
+      this.baseRepo = q.baseRepo;
+      this.baseBranch = q.baseBranch;
+      this.compareOwner = q.compareOwner;
+      this.compareRepo = q.compareRepo;
+      this.compareBranch = q.compareBranch;
+    }
   },
 
   methods: {
+    swapBranch() {
+      const branch = this.compareBranch;
+      this.compareBranch = this.baseBranch;
+      this.baseBranch = branch;
+    },
+
     getExactSameCommits(baseCommits, compareCommits) {
       const baseShaSet = new Set(baseCommits.map(commit => commit.sha));
       return compareCommits.filter(commit => baseShaSet.has(commit.sha));
@@ -150,24 +291,8 @@ export default {
       }
     },
 
-    handleClickCopy() {
-      if (this.sortedPickedShas.length === 0) return;
-
-      const textarea = this.$refs.sortedPickedShas.$el.querySelector(
-        "textarea",
-      );
-      textarea.select();
-      document.execCommand("copy");
-      document.getSelection().removeAllRanges();
-
-      this.successMessages.copy.push("Copied!");
-      setTimeout(() => {
-        this.successMessages.copy = [];
-      }, 1000);
-    },
-
-    handleClickClear() {
-      this.pickedShas = [];
+    deleteSha(sha) {
+      this.pickedShas = this.pickedShas.filter(_sha => _sha !== sha);
     },
   },
 };

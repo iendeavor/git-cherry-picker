@@ -2,9 +2,7 @@
   v-app
     navigation
     v-main.grey.lighten-4
-      v-alert( :value="alertVisible" :color="alertColor" transition="scale-transition" )
-        div {{ alertMessage }}
-      router-view( @v-alert="alert" )
+      router-view
 </template>
 
 <script>
@@ -15,25 +13,6 @@ export default {
 
   components: {
     Navigation,
-  },
-
-  data() {
-    return {
-      alertVisible: false,
-      alertColor: null,
-      alertMessage: null,
-    };
-  },
-
-  methods: {
-    alert(type, message) {
-      this.alertVisible = true;
-      this.alertMessage = message;
-      this.alertColor = "green";
-      setTimeout(() => {
-        this.alertVisible = false;
-      }, 1000);
-    },
   },
 };
 </script>
