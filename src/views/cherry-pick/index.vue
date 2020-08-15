@@ -207,24 +207,6 @@ export default {
       },
     },
 
-    baseOwner: {
-      immediate: true,
-      handler() {
-        if (this.linkOwner) {
-          this.compareOwner = this.baseOwner;
-        }
-      },
-    },
-
-    baseRepo: {
-      immediate: true,
-      handler() {
-        if (this.linkRepo) {
-          this.compareRepo = this.baseRepo;
-        }
-      },
-    },
-
     searchResult: {
       handler() {
         const object = {
