@@ -3,7 +3,9 @@
     nav
       ol
         li(v-for="route of routes" :key="route.path")
-          router-link(:to="route.path") {{ route.name }}
+          router-link.home( v-if="route.path === '/'" :to="route.path" )
+            v-icon mdi-home
+          router-link( v-else :to="route.path" ) {{ route.name }}
 </template>
 
 <script>
@@ -45,7 +47,8 @@ nav {
         text-decoration: none;
       }
 
-      & > a.router-link-exact-active,
+      & > a.router-link-exact-active.home[href="#/"],
+      & > a.router-link-active:not([href="#/"]),
       & > a:hover {
         text-decoration: underline;
       }
