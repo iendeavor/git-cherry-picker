@@ -14,7 +14,7 @@
         v-btn( icon color="red lighten-2" @click="deleteSha(sha)" )
           v-icon mdi-delete
 
-    v-snackbar( v-model="copySnackbar" ) Copied
+    v-snackbar( v-model="copySnackbar" ) Copied.
       template(v-slot:action="{ attrs }")
         v-btn( @click="copySnackbar = false" color="blue" text ) Dismiss
 </template>
