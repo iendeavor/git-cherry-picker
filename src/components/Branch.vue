@@ -1,5 +1,5 @@
 <template lang="pug">
-  v-select( :disabled="owner === null || repo === null" :value="value" label="Branch" :items="branches" clearable @change="handleChange" @click:clear="handleChange" :loading="loading")
+  v-select( :disabled="owner === null || repo === null" :value="value" label="Branch" :items="branches" clearable @change="handleChange" @click:clear="handleChange" :loading="loading !== 0")
 </template>
 
 <script>
@@ -23,7 +23,7 @@ export default {
   data() {
     return {
       branches: [],
-      loading: false,
+      loading: 0,
     };
   },
 
@@ -44,7 +44,7 @@ export default {
           return;
         }
 
-        this.loading = true;
+        ++this.loading;
 
         const owner = this.owner;
         const repo = this.repo;
@@ -61,7 +61,7 @@ export default {
             console.error(error);
           });
 
-        this.loading = false;
+        --this.loading;
       },
     },
 

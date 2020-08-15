@@ -1,5 +1,5 @@
 <template lang="pug">
-  v-select( :disabled="owner === null" :value="value" label="Repo" :items="repos" clearable @change="handleChange" @click:clear="handleChange" :loading="loading" )
+  v-select( :disabled="owner === null" :value="value" label="Repo" :items="repos" clearable @change="handleChange" @click:clear="handleChange" :loading="loading !== 0" )
 </template>
 
 <script>
@@ -19,7 +19,7 @@ export default {
   data() {
     return {
       repos: [],
-      loading: false,
+      loading: 0,
     };
   },
 
@@ -33,7 +33,7 @@ export default {
           return;
         }
 
-        this.loading = true;
+        ++this.loading;
 
         const owner = this.owner;
         await getRepos({ owner })
@@ -49,7 +49,7 @@ export default {
             console.error(error);
           });
 
-        this.loading = false;
+        --this.loading;
       },
     },
 
