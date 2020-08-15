@@ -3,8 +3,6 @@
     template( v-slot:activator="{ attrs, on }" )
       v-btn( dark @click="visible = !visible" ) View Selected
 
-    v-snackbar( v-model="successSnackbar" top timeout="1000" ) Copied
-
     v-list( max-height="300" style="overflow: scroll;" )
       v-subheader.d-flex.justify-space-between( style="position: sticky;" )
         div Selected Shas
@@ -15,6 +13,10 @@
         v-list-item-content {{ sha }}
         v-btn( icon color="red lighten-2" @click="deleteSha(sha)" )
           v-icon mdi-delete
+
+    v-snackbar( v-model="copySnackbar" ) Copied
+      template(v-slot:action="{ attrs }")
+        v-btn( @click="copySnackbar = false" color="blue" text ) Dismiss
 </template>
 
 <script>
@@ -39,14 +41,14 @@ export default {
     return {
       visible: false,
       alertMessage: "",
-      successSnackbar: false,
+      copySnackbar: false,
     };
   },
 
   methods: {
     handleClickCopy(event) {
       this.$copy(event, this.shas.join("\\n"));
-      this.successSnackbar = true;
+      this.copySnackbar = true;
     },
   },
 };
