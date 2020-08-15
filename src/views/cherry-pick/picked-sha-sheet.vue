@@ -3,8 +3,8 @@
     template( v-slot:activator="{ attrs, on }" )
       v-btn( dark @click="visible = !visible" ) View Selected
 
-    v-list( max-height="300" style="overflow: scroll;" )
-      v-subheader.d-flex.justify-space-between( style="position: sticky;" )
+    v-list
+      v-subheader.d-flex.justify-space-between
         div Selected Shas
         v-btn( :disabled="shas.length === 0" icon color="blue lighten-2" @click="handleClickCopy" )
           v-icon mdi-content-copy
@@ -53,3 +53,9 @@ export default {
   },
 };
 </script>
+
+<style lang="scss">
+.v-dialog.v-bottom-sheet {
+  overflow-y: auto;
+}
+</style>
