@@ -64,8 +64,8 @@
     v-progress-linear( v-if="loading !== 0" indeterminate color="primary" )
 
     v-row
-      v-col.py-0
-        v-card.mt-2.pa-3( v-for="commit of diffCommits" :key="commit.sha" @click="pickCommit(commit)" :class="{ grey: pickedShas.includes(commit.sha) }" )
+      v-col.py-0.px-1
+        v-card.mt-1.pa-3( v-for="commit of diffCommits" :key="commit.sha" @click="pickCommit(commit)" :class="{ grey: pickedShas.includes(commit.sha) }" )
           h4.mb-2 {{ commit.title }}
           div.pl-4( v-if="commit.message" v-for="(text, index) of commit.message.split('\\n')" :key="index") {{ text }}
           div
