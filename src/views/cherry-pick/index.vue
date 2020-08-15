@@ -7,6 +7,15 @@
     v-row.mx-auto
       v-col.py-0
         v-row.d-flex.align-center
+          v-col.py-0( cols="1" )
+          v-col.py-0( cols="5" )
+            h4 Base
+          v-col.py-0
+          v-col.py-0( cols="5" )
+            h4 Compare
+          v-col.py-0
+
+        v-row.d-flex.align-center
           v-col.d-flex.justify-center( cols="1" )
             v-btn( icon @click="linkOwner = !linkOwner" )
               v-icon mdi-link
