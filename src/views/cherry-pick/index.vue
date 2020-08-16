@@ -4,67 +4,52 @@
       v-alert.mx-auto.pa-2.ma-0( type="error" )
         p.mb-0 Please set a host and token first.
 
-    v-row.mx-auto
-      v-col.py-0
-        v-row.d-flex.align-center
-          v-col.py-0( cols="1" )
-          v-col.py-0( cols="5" )
+    v-row.d-flex.justify-center
+      v-col( cols="12" md="5" )
+        v-row.align-center
+          v-col.d-flex.justify-center
             h4 Base
-          v-col.py-0
-          v-col.py-0( cols="5" )
-            h4 Compare
-          v-col.py-0
-
-        v-row.d-flex.align-center
-          v-col.d-flex.justify-center( cols="1" )
+        v-row.align-center
+          v-col.d-flex.justify-center.py-0( cols="1" )
             v-btn( icon @click="linkOwner = !linkOwner" )
-              v-icon mdi-link
+              v-icon.black--text( :class="{ 'grey--text': !linkOwner, 'text--lighten-1': !linkOwner }" ) mdi-link
+          v-col.py-0( cols="11" )
+            owner( v-model="baseOwner" )
 
-          template( v-if="linkOwner" )
-            v-col
-              owner( v-model="baseOwner" )
-
-          template( v-else )
-            v-col( cols="5" )
-              owner( v-model="baseOwner" )
-
-            v-col( cols="1" )
-
-            v-col( cols="5" )
-              owner( v-model="compareOwner" )
-
-        v-row.d-flex.align-center
-          v-col.d-flex.justify-center( cols="1" )
+        v-row.align-center
+          v-col.d-flex.justify-center.py-0( cols="1" )
             v-btn( icon @click="linkRepo = !linkRepo" )
-              v-icon mdi-link
+              v-icon.black--text( :class="{ 'grey--text': !linkRepo, 'text--lighten-1': !linkRepo }" ) mdi-link
+          v-col.py-0( cols="11" )
+            repo( v-model="baseRepo" :owner="baseOwner" )
 
-          template( v-if="linkRepo" )
-            v-col
-              repo( v-model="baseRepo" :owner="baseOwner" )
-
-          template( v-else )
-            v-col( cols="5" )
-              repo( v-model="baseRepo" :owner="baseOwner" )
-
-            v-col( cols="1" )
-
-            v-col( cols="5" )
-              repo( v-model="compareRepo" :owner="linkOwner ? baseOwner : compareOwner" )
-
-        v-row.d-flex.align-center
-          v-col( cols="1" )
-
-          v-col( cols="5" )
+        v-row.align-center
+          v-col.d-flex.justify-center.py-0( cols="1" )
+            v-btn( icon @click="swapBranch" )
+              v-icon.black--text.d-none.d-md-flex mdi-swap-horizontal
+              v-icon.black--text.d-flex.d-md-none mdi-swap-vertical
+          v-col.py-0( cols="11" )
             branch( v-model="baseBranch" :owner="baseOwner" :repo="baseRepo" )
 
-          v-col.d-flex.justify-center( cols="1" )
-            v-btn( icon @click="swapBranch" )
-              v-icon mdi-swap-horizontal-bold
+      v-col.d-none.d-md-flex( cols="1" )
 
-          v-col( cols="5" )
+      v-col( cols="12" md="5" )
+        v-row.align-center
+          v-col.d-flex.justify-center
+            h4 Compare
+        v-row.align-center
+          v-col.py-0
+            owner.d-none.d-md-flex( v-if="linkOwner" :disabled="linkOwner" v-model="baseOwner" )
+            owner( v-else v-model="compareOwner" )
+
+        v-row.align-center
+          v-col.py-0
+            repo.d-none.d-md-flex( v-if="linkRepo" :disabled="linkRepo" v-model="baseRepo" :owner="linkOwner ? baseOwner : compareOwner" )
+            repo( v-else v-model="compareRepo" :owner="linkOwner ? baseOwner : compareOwner" )
+
+        v-row.align-center
+          v-col.py-0
             branch( v-model="compareBranch" :owner="linkOwner ? baseOwner : compareOwner" :repo="linkRepo ? baseRepo : compareRepo" )
-
-          v-col( cols="1" )
 
     v-row
       v-col.d-flex.justify-center
@@ -81,8 +66,8 @@
             span {{ commit.authorName }}
             span &nbsp;-&nbsp;
             a(:href="'mailto:' + commit.authorEmail") {{ commit.authorEmail }}
-          i.d-flex.d-sm-none {{ commit.sha.slice(0, 8) }}
-          i.d-none.d-sm-flex {{ commit.sha }}
+          i.d-flex.d-md-none {{ commit.sha.slice(0, 8) }}
+          i.d-none.d-md-flex {{ commit.sha }}
 </template>
 
 <script>

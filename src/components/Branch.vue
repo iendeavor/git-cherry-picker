@@ -1,5 +1,5 @@
 <template lang="pug">
-  v-select( :disabled="owner === null || repo === null" :value="value" label="Branch" :items="branches" clearable @change="handleChange" @click:clear="handleChange" :loading="loading !== 0")
+  v-select( v-bind="$attrs" v-on="$listeners" :disabled="owner === null || repo === null" :value="value" label="Branch" :items="branches" clearable @change="handleChange" @click:clear="handleChange" :loading="loading !== 0")
 </template>
 
 <script>

@@ -1,5 +1,5 @@
 <template lang="pug">
-  lazy-text-field( :value="value" label="Owner" @change="handleChange" )
+  lazy-text-field( v-bind="$attrs" v-on="$listeners" :value="value" label="Owner" @change="handleChange" )
 </template>
 
 <script>
