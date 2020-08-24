@@ -74,7 +74,7 @@
               v-btn( :disabled="pickedShas.length === 0" @click.stop="copyShas" icon )
                 v-icon mdi-content-copy
             v-col( cols="10" )
-              div Copy Selected Shas
+              div Selected Shas
         v-expansion-panel-content
           div(v-for="sha of pickedShas") {{ sha }}
 
