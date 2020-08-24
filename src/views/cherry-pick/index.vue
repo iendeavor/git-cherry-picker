@@ -6,50 +6,59 @@
 
     v-row.d-flex.justify-center
       v-col( cols="12" md="5" )
-        v-row.align-center
-          v-col.d-flex.justify-center
-            h4 Base
-        v-row.align-center
-          v-col.d-flex.justify-center.py-0( cols="1" )
-            v-btn( icon @click="linkOwner = !linkOwner" )
+        h4 Base
+
+        owner( v-model="baseOwner" )
+
+        repo( v-model="baseRepo" :owner="baseOwner" )
+
+        branch( v-model="baseBranch" :owner="baseOwner" :repo="baseRepo" )
+
+      v-col.d-none.d-md-flex.align-center.justify-space-around.flex-md-column( cols="2" )
+        h4
+
+        v-tooltip( bottom )
+          template( v-slot:activator="{ on, attrs }" )
+            v-btn( icon v-bind="attrs" v-on="on" @click="linkOwner = !linkOwner" )
               v-icon.black--text( :class="{ 'grey--text': !linkOwner, 'text--lighten-1': !linkOwner }" ) mdi-link
-          v-col.py-0( cols="11" )
-            owner( v-model="baseOwner" )
+          span Sync Owner
 
-        v-row.align-center
-          v-col.d-flex.justify-center.py-0( cols="1" )
-            v-btn( icon @click="linkRepo = !linkRepo" )
+        v-tooltip( bottom )
+          template( v-slot:activator="{ on, attrs }" )
+            v-btn( icon v-bind="attrs" v-on="on" @click="linkRepo = !linkRepo" )
               v-icon.black--text( :class="{ 'grey--text': !linkRepo, 'text--lighten-1': !linkRepo }" ) mdi-link
-          v-col.py-0( cols="11" )
-            repo( v-model="baseRepo" :owner="baseOwner" )
+          span Sync Repo
 
-        v-row.align-center
-          v-col.d-flex.justify-center.py-0( cols="1" )
-            v-btn( icon @click="swapBranch" )
-              v-icon.black--text.d-none.d-md-flex mdi-swap-horizontal
-              v-icon.black--text.d-flex.d-md-none mdi-swap-vertical
-          v-col.py-0( cols="11" )
-            branch( v-model="baseBranch" :owner="baseOwner" :repo="baseRepo" )
+        v-tooltip( bottom )
+          template( v-slot:activator="{ on, attrs }" )
+            v-btn( icon v-bind="attrs" v-on="on"  @click="swapBranch" )
+              v-icon.black--text mdi-swap-horizontal
+          span Swap Branch
 
-      v-col.d-none.d-md-flex( cols="1" )
+      v-col.d-flex.d-md-none.align-center.justify-space-between( cols="12" )
+        v-btn( @click="linkOwner = !linkOwner" text )
+          v-icon.black--text( :class="{ 'grey--text': !linkOwner, 'text--lighten-1': !linkOwner }" ) mdi-link
+          span Sync Owner
+
+        v-btn( @click="linkRepo = !linkRepo" text )
+          v-icon.black--text( :class="{ 'grey--text': !linkRepo, 'text--lighten-1': !linkRepo }" ) mdi-link
+          span Sync Repo
+
+        v-btn(  @click="swapBranch" text )
+          v-icon.black--text mdi-swap-vertical
+          span Swap Branch
+
 
       v-col( cols="12" md="5" )
-        v-row.align-center
-          v-col.d-flex.justify-center
-            h4 Compare
-        v-row.align-center
-          v-col.py-0
-            owner.d-none.d-md-flex( v-if="linkOwner" :disabled="linkOwner" v-model="baseOwner" )
-            owner( v-else v-model="compareOwner" )
+        h4 Compare
 
-        v-row.align-center
-          v-col.py-0
-            repo.d-none.d-md-flex( v-if="linkRepo" :disabled="linkRepo" v-model="baseRepo" :owner="linkOwner ? baseOwner : compareOwner" )
-            repo( v-else v-model="compareRepo" :owner="linkOwner ? baseOwner : compareOwner" )
+        owner.d-none.d-md-flex( v-if="linkOwner" :disabled="linkOwner" v-model="baseOwner" )
+        owner( v-else v-model="compareOwner" )
 
-        v-row.align-center
-          v-col.py-0
-            branch( v-model="compareBranch" :owner="linkOwner ? baseOwner : compareOwner" :repo="linkRepo ? baseRepo : compareRepo" )
+        repo.d-none.d-md-flex( v-if="linkRepo" :disabled="linkRepo" v-model="baseRepo" :owner="linkOwner ? baseOwner : compareOwner" )
+        repo( v-else v-model="compareRepo" :owner="linkOwner ? baseOwner : compareOwner" )
+
+        branch( v-model="compareBranch" :owner="linkOwner ? baseOwner : compareOwner" :repo="linkRepo ? baseRepo : compareRepo" )
 
     v-row
       v-col.d-flex.justify-center
