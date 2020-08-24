@@ -55,6 +55,7 @@ export const getCommits = ({
         authorEmail: commit.author_email,
         title: commit.title,
         message: commit.message.replace(commit.title, "").trim(),
+        createdAt: commit.created_at,
       }));
     })
     .catch(err => {

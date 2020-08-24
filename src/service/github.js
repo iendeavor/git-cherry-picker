@@ -47,6 +47,7 @@ export const getCommits = ({
     .then(response => {
       return response.data.map(commit => ({
         sha: commit.sha,
+        createdAt: commit.commit.author.date,
         authorName: commit.commit.author.name,
         authorEmail: commit.commit.author.email,
         title: commit.commit.message.split("\n")[0],

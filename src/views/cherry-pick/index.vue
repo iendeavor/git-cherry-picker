@@ -60,23 +60,40 @@
 
         branch( v-model="compareBranch" :owner="linkOwner ? baseOwner : compareOwner" :repo="linkRepo ? baseRepo : compareRepo" )
 
-    v-row
-      v-col.d-flex.justify-center
-        picked-sha-sheet( v-model="sortedPickedShas" :deleteSha="deleteSha" )
-
     v-progress-linear( v-if="loading !== 0" indeterminate color="primary" )
 
-    v-row
-      v-col.py-0.px-1
-        v-card.mt-1.pa-3( v-for="commit of diffCommits" :key="commit.sha" @click="pickCommit(commit)" :class="{ grey: pickedShas.includes(commit.sha) }" )
-          h4.mb-2 {{ commit.title }}
+    v-snackbar( v-model="copySnackbar" ) Copied.
+      template(v-slot:action="{ attrs }")
+        v-btn( @click="copySnackbar = false" color="blue" text ) Dismiss
+    v-expansion-panels( accordion )
+      v-expansion-panel.grey( :disabled="pickedShas.length === 0" )
+        v-expansion-panel-header.py-0
+          v-row.align-center.mr-2
+            v-col( cols="1" )
+              v-btn( :disabled="pickedShas.length === 0" @click.stop="copyShas" icon )
+                v-icon mdi-content-copy
+            v-col( cols="10" )
+              div Copy Selected Shas
+        v-expansion-panel-content
+          div(v-for="sha of pickedShas") {{ sha }}
+
+      v-expansion-panel( v-for="commit of diffCommits" :key="commit.sha" )
+        v-expansion-panel-header.py-0
+          v-row.align-center.mr-2
+            v-col( cols="1" )
+              v-btn( :class="{ grey: pickedShas.includes(commit.sha) }" @click.stop="pickCommit(commit)" icon )
+                v-icon mdi-check
+            v-col( cols="10" )
+              div {{ commit.title }}
+              sub
+                span {{ commit.authorName }} &nbsp;
+                span.grey--text committed {{ format(commit.createdAt) }}
+            v-col( cols="1" )
+              span {{ commit.sha.slice(0, 8) }}
+        v-expansion-panel-content
           div.pl-4( v-if="commit.message" v-for="(text, index) of commit.message.split('\\n')" :key="index") {{ text }}
-          div
-            span {{ commit.authorName }}
-            span &nbsp;-&nbsp;
-            a(:href="'mailto:' + commit.authorEmail") {{ commit.authorEmail }}
-          i.d-flex.d-md-none {{ commit.sha.slice(0, 8) }}
-          i.d-none.d-md-flex {{ commit.sha }}
+          a(:href="'mailto:' + commit.authorEmail") {{ commit.authorEmail }}
+
 </template>
 
 <script>
@@ -86,6 +103,8 @@ import Branch from "../../components/Branch";
 import commitsMixin from "./commits";
 import PickedShaSheet from "./picked-sha-sheet";
 import useQuery from "../../hooks/use-query";
+import useClipboard from "@/hooks/use-clipboard";
+import { format } from "timeago.js";
 
 export default {
   name: "cherry-pick",
@@ -97,7 +116,7 @@ export default {
     PickedShaSheet,
   },
 
-  mixins: [commitsMixin, useQuery],
+  mixins: [commitsMixin, useQuery, useClipboard],
 
   data() {
     return {
@@ -117,6 +136,8 @@ export default {
 
       pickedShas: [],
       loading: 0,
+
+      copySnackbar: false,
     };
   },
 
@@ -280,9 +301,12 @@ export default {
       }
     },
 
-    deleteSha(sha) {
-      this.pickedShas = this.pickedShas.filter(_sha => _sha !== sha);
+    copyShas(event) {
+      this.$copy(event, this.pickedShas.join(" "));
+      this.copySnackbar = true;
     },
+
+    format,
   },
 };
 </script>
