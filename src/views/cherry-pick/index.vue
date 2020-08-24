@@ -65,8 +65,9 @@
     v-snackbar( v-model="copySnackbar" ) Copied.
       template(v-slot:action="{ attrs }")
         v-btn( @click="copySnackbar = false" color="blue" text ) Dismiss
-    v-expansion-panels( accordion )
-      v-expansion-panel.grey( :disabled="pickedShas.length === 0" )
+
+    v-expansion-panels
+      v-expansion-panel.mb-5.grey( :disabled="pickedShas.length === 0" )
         v-expansion-panel-header.py-0
           v-row.align-center.mr-2
             v-col( cols="1" )
@@ -77,6 +78,7 @@
         v-expansion-panel-content
           div(v-for="sha of pickedShas") {{ sha }}
 
+    v-expansion-panels( accordion hover )
       v-expansion-panel( v-for="commit of diffCommits" :key="commit.sha" )
         v-expansion-panel-header.py-0
           v-row.align-center.mr-2
