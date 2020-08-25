@@ -6,7 +6,7 @@
 
     v-row.d-flex.justify-center
       v-col( cols="12" md="5" )
-        h4 Base
+        h4.d-flex.justify-center Base
 
         owner( v-model="baseOwner" )
 
@@ -50,7 +50,7 @@
 
 
       v-col( cols="12" md="5" )
-        h4 Compare
+        h4.d-flex.justify-center Compare
 
         owner.d-none.d-md-flex( v-if="linkOwner" :disabled="linkOwner" v-model="baseOwner" )
         owner( v-else v-model="compareOwner" )
