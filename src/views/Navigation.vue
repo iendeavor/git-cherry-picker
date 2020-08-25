@@ -1,11 +1,15 @@
 <template lang="pug">
   v-app-bar(app dark)
-    nav
+    nav.d-flex.justify-space-between
       ol
         li(v-for="route of routes" :key="route.path")
           router-link.home( v-if="route.path === '/'" :to="route.path" )
             v-icon mdi-home
           router-link( v-else :to="route.path" ) {{ route.name }}
+      ol
+        li
+          a(href="https://github.com/iendeavor/git-cherry-picker" target="_blank")
+            v-icon mdi-github
 </template>
 
 <script>
