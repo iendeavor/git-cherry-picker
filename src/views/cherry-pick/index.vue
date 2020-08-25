@@ -71,13 +71,13 @@
         v-expansion-panel-header.py-0
           v-row.align-center.mr-1
             v-col( cols="1" )
-              v-btn( :disabled="pickedShas.length === 0" @click.stop="lock" icon )
+              v-btn( @click.stop="lock" icon )
                 v-icon( v-if="locking" ) mdi-lock
                 v-icon( v-else ) mdi-lock-open-outline
             v-col
               div Selected Shas (Oldest First)
             v-col.d-flex.align-center.justify-end( cols="2" )
-              v-btn( :disabled="pickedShas.length === 0" @click.stop="copyShas($event, reversedPickedShas.join(' '))" icon )
+              v-chip( @click.stop="copyShas($event, reversedPickedShas.join(' '))" label outlined )
                 v-icon mdi-content-copy
         v-expansion-panel-content
           div(v-for="sha of reversedPickedShas") {{ sha }}
@@ -94,11 +94,11 @@
               sub
                 span {{ commit.authorName }} &nbsp;
                 span.grey--text committed {{ format(commit.createdAt) }}
-            v-col.d-flex.align-center.justify-end( cols="2" )
-              v-chip( label outlined )
+            v-col.d-flex.align-center.justify-end
+              v-chip.rounded-tr-0.rounded-br-0( label outlined )
                 span.sha.font-weight-bold {{ commit.sha.slice(0, 8) }}
-                v-btn( @click.stop="copyShas($event, commit.sha)" icon )
-                  v-icon mdi-content-copy
+              v-chip.rounded-tl-0.rounded-bl-0( @click.stop="copyShas($event, commit.sha)" label outlined )
+                v-icon mdi-content-copy
         v-expansion-panel-content
           div.pl-4( v-if="commit.message" v-for="(text, index) of commit.message.split('\\n')" :key="index") {{ text }}
           a(:href="'mailto:' + commit.authorEmail") {{ commit.authorEmail }}
@@ -328,6 +328,8 @@ export default {
     },
 
     copyShas(event, content) {
+      if (!content) return;
+
       this.$copy(event, content);
       this.copySnackbar = true;
     },
