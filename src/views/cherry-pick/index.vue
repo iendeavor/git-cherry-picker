@@ -222,7 +222,11 @@ export default {
       deep: true,
       async handler([owner, repo, branch]) {
         ++this.loading;
-        this.baseCommits = await this.getCommits(owner, repo, branch);
+        const oldForm = JSON.stringify([owner, repo, branch]);
+        const commits = await this.getCommits(owner, repo, branch);
+        if (oldForm === JSON.stringify(this.fieldsAboutBaseCommits)) {
+          this.baseCommits = commits;
+        }
         --this.loading;
       },
     },
@@ -232,7 +236,11 @@ export default {
       deep: true,
       async handler([owner, repo, branch]) {
         ++this.loading;
-        this.compareCommits = await this.getCommits(owner, repo, branch);
+        const oldForm = JSON.stringify([owner, repo, branch]);
+        const commits = await this.getCommits(owner, repo, branch);
+        if (oldForm === JSON.stringify(this.fieldsAboutCompareCommits)) {
+          this.compareCommits = commits;
+        }
         --this.loading;
       },
     },
