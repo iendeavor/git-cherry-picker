@@ -4,6 +4,12 @@
   "private": true,
   "description": "Git cherry-pick tool for GitHub and others",
   "author": "Ernest <iattempt.net@gmail.com>",
+  "contributors": [
+    {
+      "name": "AkaiZhao",
+      "url": "https://github.com/AkaiZhao"
+    }
+  ],
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
