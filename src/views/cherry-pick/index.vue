@@ -77,10 +77,10 @@
             v-col
               div Selected Shas (Oldest First)
             v-col.d-flex.align-center.justify-end( cols="2" )
-              v-chip( @click.stop="copyShas($event, pickedShas.join(' '))" label outlined )
+              v-chip( @click.stop="copyShas($event, sortedPickedShas.join(' '))" label outlined )
                 v-icon mdi-content-copy
         v-expansion-panel-content
-          div(v-for="sha of pickedShas") {{ sha }}
+          div(v-for="sha of sortedPickedShas") {{ sha }}
 
     v-expansion-panels( accordion hover )
       v-expansion-panel( v-for="commit of diffCommits" :key="commit.sha" )
