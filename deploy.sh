@@ -3,6 +3,9 @@
 # abort on errors
 set -e
 
+# update version
+yarn version
+
 # build
 npm run build
 
