@@ -1,25 +1,33 @@
 import { getCommits } from "@/service";
-import dayjs from "dayjs";
 
 export default {
   methods: {
-    async getCommits(owner, repo, branch) {
+    async getCommits(owner, repo, branch, { since, until }) {
       if (owner === null || repo === null || branch === null) {
         return [];
       }
 
-      const promise = getCommits({
-        owner,
-        repo,
-        branch,
-        since: dayjs().subtract(6, "month"),
-        page: 1,
-        perPage: 100,
-      });
+      const getNextCommits = page =>
+        getCommits({
+          owner,
+          repo,
+          branch,
+          since,
+          until,
+          page,
+          perPage: 100,
+        });
 
-      return promise.then(response => {
-        return response;
-      });
+      const commits = [];
+      let page = 1;
+      let nextCommits = [];
+      do {
+        nextCommits = await getNextCommits(page++);
+        if (nextCommits.length === 0) break;
+        commits.splice(commits.length, 0, ...nextCommits);
+      } while (nextCommits.length);
+
+      return commits;
     },
   },
 };

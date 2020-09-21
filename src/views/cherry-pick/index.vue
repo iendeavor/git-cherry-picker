@@ -60,6 +60,51 @@
 
         branch( v-model="compareBranch" :owner="linkOwner ? baseOwner : compareOwner" :repo="linkRepo ? baseRepo : compareRepo" )
 
+    v-expansion-panels
+      v-expansion-panel.mb-5.grey
+        v-expansion-panel-header.py-0
+          v-row.align-center.mr-1
+            v-col.ml-2( cols="1" )
+              v-icon mdi-filter-outline
+            v-col
+              div Filter by additional options
+        v-expansion-panel-content
+          v-row.align-center.mr-1
+            v-col( cols="6" )
+              v-menu(
+                ref="sinceMenu"
+                v-model="others.sinceMenu"
+                transition="scale-transition"
+                :close-on-content-click="false"
+                offset-y
+              )
+                template(v-slot:activator="{ on, attrs }")
+                  v-text-field(
+                    v-model="since"
+                    label="Since"
+                    readonly
+                    v-bind="attrs"
+                    v-on="on"
+                  )
+                v-date-picker( v-model="since" @input="others.sinceMenu = false" color="grey" )
+            v-col( cols="6" )
+              v-menu(
+                ref="untilMenu"
+                v-model="others.untilMenu"
+                transition="scale-transition"
+                :close-on-content-click="false"
+                offset-y
+              )
+                template(v-slot:activator="{ on, attrs }")
+                  v-text-field(
+                    v-model="until"
+                    label="Until"
+                    readonly
+                    v-bind="attrs"
+                    v-on="on"
+                  )
+                v-date-picker( v-model="until" @input="others.untilMenu = false" color="grey" )
+
     v-progress-linear( v-if="loading !== 0" indeterminate color="primary" )
 
     v-snackbar( v-model="copySnackbar" ) Copied.
@@ -114,6 +159,8 @@ import PickedShaSheet from "./picked-sha-sheet";
 import useQuery from "../../hooks/use-query";
 import useClipboard from "@/hooks/use-clipboard";
 import { format } from "timeago.js";
+import dayjs from "dayjs";
+
 const reproduceFields = [
   "baseOwner",
   "baseRepo",
@@ -155,11 +202,21 @@ export default {
       baseCommits: [],
       compareCommits: [],
 
+      since: dayjs()
+        .subtract(1, "month")
+        .format("YYYY-MM-DD"),
+      until: dayjs().format("YYYY-MM-DD"),
+
       locking: false,
       pickedShas: [],
       loading: 0,
 
       copySnackbar: false,
+
+      others: {
+        sinceMenu: false,
+        untilMenu: false,
+      },
     };
   },
 
@@ -203,7 +260,13 @@ export default {
     },
 
     fieldsAboutBaseCommits() {
-      return [this.baseOwner, this.baseRepo, this.baseBranch];
+      return [
+        this.baseOwner,
+        this.baseRepo,
+        this.baseBranch,
+        this.since,
+        this.until,
+      ];
     },
 
     fieldsAboutCompareCommits() {
@@ -235,8 +298,11 @@ export default {
       deep: true,
       async handler([owner, repo, branch]) {
         ++this.loading;
-        const oldForm = JSON.stringify([owner, repo, branch]);
-        const commits = await this.getCommits(owner, repo, branch);
+        const oldForm = JSON.stringify(this.fieldsAboutBaseCommits);
+        const commits = await this.getCommits(owner, repo, branch, {
+          since: this.since,
+          until: this.until,
+        });
         if (oldForm === JSON.stringify(this.fieldsAboutBaseCommits)) {
           this.baseCommits = commits;
         }
@@ -249,8 +315,11 @@ export default {
       deep: true,
       async handler([owner, repo, branch]) {
         ++this.loading;
-        const oldForm = JSON.stringify([owner, repo, branch]);
-        const commits = await this.getCommits(owner, repo, branch);
+        const oldForm = JSON.stringify(this.fieldsAboutCompareCommits);
+        const commits = await this.getCommits(owner, repo, branch, {
+          since: this.since,
+          until: this.until,
+        });
         if (oldForm === JSON.stringify(this.fieldsAboutCompareCommits)) {
           this.compareCommits = commits;
         }
