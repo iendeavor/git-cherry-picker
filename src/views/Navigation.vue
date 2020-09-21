@@ -10,14 +10,19 @@
         li
           a(href="https://github.com/iendeavor/git-cherry-picker" target="_blank")
             v-icon mdi-github
+        li v{{ version }}
 </template>
 
 <script>
+import pkg from "@/../package.json";
 import { routes } from "@/router";
 export default {
   computed: {
     routes() {
       return routes;
+    },
+    version() {
+      return pkg.version;
     },
   },
 };
