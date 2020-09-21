@@ -114,6 +114,18 @@ import PickedShaSheet from "./picked-sha-sheet";
 import useQuery from "../../hooks/use-query";
 import useClipboard from "@/hooks/use-clipboard";
 import { format } from "timeago.js";
+const reproduceFields = [
+  "baseOwner",
+  "baseRepo",
+  "baseBranch",
+  "compareOwner",
+  "compareRepo",
+  "compareBranch",
+  "linkOwner",
+  "linkRepo",
+  "since",
+  "until",
+];
 
 export default {
   name: "cherry-pick",
@@ -199,20 +211,13 @@ export default {
         this.linkOwner ? this.baseOwner : this.compareOwner,
         this.linkRepo ? this.baseRepo : this.compareRepo,
         this.compareBranch,
+        this.since,
+        this.until,
       ];
     },
 
-    searchResult() {
-      return JSON.stringify([
-        this.baseOwner,
-        this.baseRepo,
-        this.baseBranch,
-        this.compareOwner,
-        this.compareRepo,
-        this.compareBranch,
-        this.linkOwner,
-        this.linkRepo,
-      ]);
+    query() {
+      return JSON.stringify(reproduceFields.map(field => this[field]));
     },
   },
 
@@ -253,35 +258,24 @@ export default {
       },
     },
 
-    searchResult: {
+    query: {
       handler() {
-        const object = {
-          baseOwner: this.baseOwner,
-          baseRepo: this.baseRepo,
-          baseBranch: this.baseBranch,
-          compareOwner: this.compareOwner,
-          compareRepo: this.compareRepo,
-          compareBranch: this.compareBranch,
-          linkOwner: this.linkOwner,
-          linkRepo: this.linkRepo,
-        };
+        const query = reproduceFields.reduce((query, field) => {
+          query[field] = this[field];
+          return query;
+        }, {});
 
-        this.putQuery(object);
+        this.putQuery(query);
       },
     },
   },
 
   created() {
-    const q = this.getQuery();
-    if (q) {
-      this.linkOwner = q.linkOwner;
-      this.linkRepo = q.linkRepo;
-      this.baseOwner = q.baseOwner;
-      this.baseRepo = q.baseRepo;
-      this.baseBranch = q.baseBranch;
-      this.compareOwner = q.compareOwner;
-      this.compareRepo = q.compareRepo;
-      this.compareBranch = q.compareBranch;
+    const query = this.getQuery();
+    if (query) {
+      for (const field of reproduceFields) {
+        this[field] = query[field];
+      }
     }
   },
 
