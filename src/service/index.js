@@ -49,3 +49,7 @@ export const getCommits = ({
 export const getBranches = ({ owner, repo, page, perPage }) => {
   return Git.getBranches({ owner, repo, page, perPage });
 };
+
+export const getTags = ({ owner, repo, page, perPage }) => {
+  return Git.getTags({ owner, repo, page, perPage });
+};

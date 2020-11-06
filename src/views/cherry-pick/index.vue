@@ -12,7 +12,7 @@
 
         repo( v-model="baseRepo" :owner="baseOwner" )
 
-        branch( v-model="baseBranch" :owner="baseOwner" :repo="baseRepo" )
+        branch-and-tag( v-model="baseBranch" :owner="baseOwner" :repo="baseRepo" )
 
       v-col.d-none.d-md-flex.align-center.justify-space-around.flex-md-column( cols="2" )
         h4
@@ -58,7 +58,7 @@
         repo.d-none.d-md-flex( v-if="linkRepo" :disabled="linkRepo" v-model="baseRepo" :owner="linkOwner ? baseOwner : compareOwner" )
         repo( v-else v-model="compareRepo" :owner="linkOwner ? baseOwner : compareOwner" )
 
-        branch( v-model="compareBranch" :owner="linkOwner ? baseOwner : compareOwner" :repo="linkRepo ? baseRepo : compareRepo" )
+        branch-and-tag( v-model="compareBranch" :owner="linkOwner ? baseOwner : compareOwner" :repo="linkRepo ? baseRepo : compareRepo" )
 
     v-expansion-panels
       v-expansion-panel.mb-5.grey
@@ -153,7 +153,7 @@
 <script>
 import Owner from "../../components/Owner";
 import Repo from "../../components/Repo";
-import Branch from "../../components/Branch";
+import BranchAndTag from "../../components/BranchAndTag";
 import commitsMixin from "./commits";
 import PickedShaSheet from "./picked-sha-sheet";
 import useQuery from "../../hooks/use-query";
@@ -180,7 +180,7 @@ export default {
   components: {
     Owner,
     Repo,
-    Branch,
+    BranchAndTag,
     PickedShaSheet,
   },
 

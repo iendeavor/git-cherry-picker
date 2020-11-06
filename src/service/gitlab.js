@@ -85,3 +85,19 @@ export const getBranches = ({ repo, page, perPage }) => {
       return [];
     });
 };
+
+export const getTags = ({ repo, page, perPage }) => {
+  const uri = `projects/${repo}/repository/tags`;
+  const params = {};
+  if (page !== undefined) params.page = page;
+  if (perPage !== undefined) params.per_page = perPage;
+
+  return Axios.get(uri, { params })
+    .then(async response => {
+      return response.data;
+    })
+    .catch(err => {
+      error(err);
+      return [];
+    });
+};

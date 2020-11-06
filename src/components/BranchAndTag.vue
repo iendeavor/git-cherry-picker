@@ -1,9 +1,9 @@
 <template lang="pug">
-  v-select( v-bind="$attrs" v-on="$listeners" :disabled="owner === null || repo === null" :value="value" label="Branch" :items="branches" clearable @change="handleChange" @click:clear="handleChange" :loading="loading !== 0")
+  v-select( v-bind="$attrs" v-on="$listeners" :disabled="owner === null || repo === null" :value="value" label="Branch and tag" :items="branchAndTags" clearable @change="handleChange" @click:clear="handleChange" :loading="loading !== 0")
 </template>
 
 <script>
-import { getBranches } from "@/service";
+import { getBranches, getTags } from "@/service";
 
 export default {
   props: {
@@ -23,6 +23,7 @@ export default {
   data() {
     return {
       branches: [],
+      tags: [],
       loading: 0,
     };
   },
@@ -30,6 +31,12 @@ export default {
   computed: {
     filedsAboutBranch() {
       return [this.owner, this.repo];
+    },
+
+    branchAndTags() {
+      return [...this.branches, ...this.tags].sort((a, b) =>
+        a.text.localeCompare(b.text),
+      );
     },
   },
 
@@ -41,6 +48,7 @@ export default {
         if (this.owner === null || this.repo === null) {
           this.handleChange();
           this.branches = [];
+          this.tags = [];
           return;
         }
 
@@ -53,6 +61,18 @@ export default {
             if (this.owner !== owner) return;
             if (this.repo !== repo) return;
             this.branches = response.map(item => ({
+              text: item.name,
+              value: item.name,
+            }));
+          })
+          .catch(error => {
+            console.error(error);
+          });
+        await getTags({ owner, repo, page: 1, perPage: 100 })
+          .then(response => {
+            if (this.owner !== owner) return;
+            if (this.repo !== repo) return;
+            this.tags = response.map(item => ({
               text: item.name,
               value: item.name,
             }));

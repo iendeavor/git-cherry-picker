@@ -75,3 +75,7 @@ export const getBranches = ({ owner, repo }) => {
       return [];
     });
 };
+
+export const getTags = () => {
+  throw Error("Not implemented");
+};
