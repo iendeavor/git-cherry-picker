@@ -23,6 +23,7 @@ git commit -m 'deploy'
 # git push -f git@github.com:<USERNAME>/<USERNAME>.github.io.git master
 
 # if you are deploying to https://<USERNAME>.github.io/<REPO>
-git push -f git@github.com:iendeavor/git-cherry-picker.git master:gh-pages
+git push -f git@github.com:iendeavor/git-cherry-picker.git main:gh-pages
+git push origin main --follow-tags
 
 cd -
