@@ -160,7 +160,7 @@
           v-expansion-panel-header.py-0
             v-row.align-center.mr-1
               v-col( cols="1" )
-                v-btn( :disabled="locking" :class="{ grey: pickedShas.includes(commit.sha) }" @click.stop="pickCommit(commit)" icon )
+                v-btn( :disabled="locking" :class="{ white: pickedShas.includes(commit.sha) }" @click.stop="pickCommit(commit)" icon )
                   v-icon mdi-check
               v-col
                 div {{ commit.title }}
