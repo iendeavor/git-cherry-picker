@@ -102,6 +102,8 @@
                     readonly
                     v-bind="attrs"
                     v-on="on"
+                    clearable
+                    placeholder="Today"
                   )
                 v-date-picker( v-model="until" @input="others.untilMenu = false" color="grey" )
 
@@ -205,7 +207,7 @@ export default {
       since: dayjs()
         .subtract(1, "month")
         .format("YYYY-MM-DD"),
-      until: dayjs().format("YYYY-MM-DD"),
+      until: null,
 
       locking: false,
       pickedShas: [],
