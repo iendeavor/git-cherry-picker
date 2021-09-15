@@ -24,6 +24,7 @@ git commit -m 'deploy'
 
 # if you are deploying to https://<USERNAME>.github.io/<REPO>
 git push -f git@github.com:iendeavor/git-cherry-picker.git main:gh-pages
-git push origin main --follow-tags
 
 cd -
+
+git push origin main --follow-tags
