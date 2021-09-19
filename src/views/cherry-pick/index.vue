@@ -103,7 +103,7 @@
                     v-bind="attrs"
                     v-on="on"
                     clearable
-                    placeholder="Today"
+                    placeholder="Now"
                   )
                 v-date-picker( v-model="until" @input="others.untilMenu = false" color="grey" )
 
