@@ -129,6 +129,15 @@
         v-expansion-panel-content
           div(v-for="sha of sortedPickedShas" style="font-family: monospace;") git cherry-pick -x {{ sha }}
 
+    v-container
+      v-row.d-flex.justify-center
+        v-btn.mx-1( @click.stop="toggleAll" )
+          strong Toggle all
+        v-btn.mx-1( @click.stop="selectAll" )
+          strong Select all
+        v-btn.mx-1( @click.stop="removeAll" )
+          strong Remove all
+
     v-expansion-panels( accordion hover )
       v-expansion-panel( v-for="commit of diffCommits" :key="commit.sha" )
         v-expansion-panel-header.py-0(v-if="hiddenShas.has(commit.sha) === false")
@@ -428,6 +437,20 @@ export default {
       } else {
         this.pickedShas.push(commit.sha);
       }
+    },
+
+    toggleAll() {
+      this.pickedShas = this.diffCommits
+        .filter(commit => this.pickedShas.includes(commit.sha) === false)
+        .map(commit => commit.sha);
+    },
+
+    selectAll() {
+      this.pickedShas = this.diffCommits.map(commit => commit.sha);
+    },
+
+    removeAll() {
+      this.pickedShas = [];
     },
 
     lock() {
