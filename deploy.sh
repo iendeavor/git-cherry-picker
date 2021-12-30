@@ -17,6 +17,7 @@ cd dist
 
 git init
 git add -A
+git checkout -b main
 git commit -m 'deploy'
 
 # if you are deploying to https://<USERNAME>.github.io
