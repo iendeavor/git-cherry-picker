@@ -393,14 +393,32 @@ export default {
         this.putQuery(query);
       },
     },
+
+    hiddenCommits: {
+      deep: true,
+      handler() {
+        // TODO: 取分專案，避免 sha 相同造成判斷錯誤
+        localStorage.setItem(
+          "hiddenCommits",
+          JSON.stringify(this.hiddenCommits),
+        );
+      },
+    },
   },
 
-  created() {
+  mounted() {
     const query = this.getQuery();
     if (query) {
       for (const field of reproduceFields) {
         this[field] = query[field];
-        if (field === "hiddenCommits") this[field] = query[field] || [];
+        if (field === "hiddenCommits") {
+          this[field] = query[field] ?? [];
+          if (this[field].length === 0) {
+            this.hiddenCommits = JSON.parse(
+              localStorage.getItem("hiddenCommits") ?? "[]",
+            );
+          }
+        }
       }
     }
   },
