@@ -146,7 +146,7 @@
                 span.sha.font-weight-bold {{ commit.sha.slice(0, 8) }}
               v-chip.rounded-0( @click.stop="copyShas($event, commit.sha)" label outlined )
                 v-icon mdi-content-copy
-              v-chip.rounded-tl-0.rounded-bl-0( @click.stop="toggleCommit($event, commit)" label outlined )
+              v-chip.rounded-tl-0.rounded-bl-0( @click.stop="toggleHiddenCommit($event, commit)" label outlined )
                 v-icon mdi-eye-off
         v-expansion-panel-content
           div.pl-4( v-if="commit.message" v-for="(text, index) of commit.message.split('\\n')" :key="index") {{ text }}
@@ -172,7 +172,7 @@
                   span.sha.font-weight-bold {{ commit.sha.slice(0, 8) }}
                 v-chip.rounded-0( @click.stop="copyShas($event, commit.sha)" label outlined )
                   v-icon mdi-content-copy
-                v-chip.rounded-tl-0.rounded-bl-0( @click.stop="toggleCommit($event, commit)" label outlined )
+                v-chip.rounded-tl-0.rounded-bl-0( @click.stop="toggleHiddenCommit($event, commit)" label outlined )
                   v-icon mdi-eye
           v-expansion-panel-content
             div.pl-4( v-if="commit.message" v-for="(text, index) of commit.message.split('\\n')" :key="index") {{ text }}
@@ -443,7 +443,7 @@ export default {
       this.copySnackbar = true;
     },
 
-    toggleCommit(_, commit) {
+    toggleHiddenCommit(_, commit) {
       const index = this.hiddenCommits.findIndex(
         value => value.sha === commit.sha,
       );
