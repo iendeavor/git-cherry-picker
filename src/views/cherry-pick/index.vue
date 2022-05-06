@@ -140,7 +140,7 @@
 
     v-expansion-panels( accordion hover )
       v-expansion-panel( v-for="commit of diffCommits" :key="commit.sha" )
-        v-expansion-panel-header.py-0(v-if="hiddenShas.has(commit.sha) === false")
+        v-expansion-panel-header.py-0
           v-row.align-center.mr-1
             v-col( cols="1" )
               v-btn( :disabled="locking" :class="{ grey: pickedShas.includes(commit.sha) }" @click.stop="pickCommit(commit)" icon )
@@ -155,35 +155,11 @@
                 span.sha.font-weight-bold {{ commit.sha.slice(0, 8) }}
               v-chip.rounded-0( @click.stop="copyShas($event, commit.sha)" label outlined )
                 v-icon mdi-content-copy
-              v-chip.rounded-tl-0.rounded-bl-0( @click.stop="toggleHiddenCommit($event, commit)" label outlined )
+              //- v-chip.rounded-tl-0.rounded-bl-0( @click.stop="toggleHiddenCommit($event, commit)" label outlined )
                 v-icon mdi-eye-off
         v-expansion-panel-content
           div.pl-4( v-if="commit.message" v-for="(text, index) of commit.message.split('\\n')" :key="index") {{ text }}
           a(:href="'mailto:' + commit.authorEmail") {{ commit.authorEmail }}
-
-    template(v-if="loading === 0 && hiddenCommits.length")
-      .mb-5
-      div Hidden Commits
-      v-expansion-panels
-        v-expansion-panel.grey( v-for="commit of sortedHiddenCommits" :key="commit.sha" )
-          v-expansion-panel-header.py-0
-            v-row.align-center.mr-1
-              v-col( cols="1" )
-              v-col
-                div {{ commit.title }}
-                sub
-                  span {{ commit.authorName }} &nbsp;
-                  span.grey--text committed {{ format(commit.createdAt) }}
-              v-col.d-flex.align-center.justify-end
-                v-chip.rounded-tr-0.rounded-br-0( label outlined )
-                  span.sha.font-weight-bold {{ commit.sha.slice(0, 8) }}
-                v-chip.rounded-0( @click.stop="copyShas($event, commit.sha)" label outlined )
-                  v-icon mdi-content-copy
-                v-chip.rounded-tl-0.rounded-bl-0( @click.stop="toggleHiddenCommit($event, commit)" label outlined )
-                  v-icon mdi-eye
-          v-expansion-panel-content
-            div.pl-4( v-if="commit.message" v-for="(text, index) of commit.message.split('\\n')" :key="index") {{ text }}
-            a(:href="'mailto:' + commit.authorEmail") {{ commit.authorEmail }}
 
 </template>
 
@@ -209,7 +185,6 @@ const reproduceFields = [
   "linkRepo",
   "since",
   "until",
-  "hiddenCommits",
 ];
 
 export default {
@@ -249,8 +224,6 @@ export default {
       pickedShas: [],
       loading: 0,
 
-      hiddenCommits: [],
-
       copySnackbar: false,
 
       others: {
@@ -271,10 +244,6 @@ export default {
       return new Set(
         [].concat(this.exactSameCommitShas, this.cherryPickedCommitShas),
       );
-    },
-
-    hiddenShas() {
-      return new Set(this.hiddenCommits.map(commit => commit.sha));
     },
 
     exactSameCommitShas() {
@@ -301,18 +270,6 @@ export default {
       }
 
       return sortedPickedShas.reverse();
-    },
-
-    sortedHiddenCommits() {
-      const sortedPickedCommits = [];
-
-      for (const commit of this.diffCommits.slice().reverse()) {
-        if (this.hiddenShas.has(commit.sha)) {
-          sortedPickedCommits.push(commit);
-        }
-      }
-
-      return sortedPickedCommits.reverse();
     },
 
     fieldsAboutBaseCommits() {
@@ -393,17 +350,6 @@ export default {
         this.putQuery(query);
       },
     },
-
-    hiddenCommits: {
-      deep: true,
-      handler() {
-        // TODO: 取分專案，避免 sha 相同造成判斷錯誤
-        localStorage.setItem(
-          "hiddenCommits",
-          JSON.stringify(this.hiddenCommits),
-        );
-      },
-    },
   },
 
   mounted() {
@@ -411,14 +357,6 @@ export default {
     if (query) {
       for (const field of reproduceFields) {
         this[field] = query[field];
-        if (field === "hiddenCommits") {
-          this[field] = query[field] ?? [];
-          if (this[field].length === 0) {
-            this.hiddenCommits = JSON.parse(
-              localStorage.getItem("hiddenCommits") ?? "[]",
-            );
-          }
-        }
       }
     }
   },
@@ -480,19 +418,6 @@ export default {
 
       this.$copy(event, content);
       this.copySnackbar = true;
-    },
-
-    toggleHiddenCommit(_, commit) {
-      const index = this.hiddenCommits.findIndex(
-        value => value.sha === commit.sha,
-      );
-      if (index === -1) {
-        this.hiddenCommits.push(commit);
-      } else {
-        this.hiddenCommits.splice(commit, 1);
-      }
-
-      this.pickedShas = this.pickedShas.filter(sha => sha !== commit.sha);
     },
 
     format,
