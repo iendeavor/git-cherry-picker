@@ -76,7 +76,7 @@ export const getCommits = ({
 }) => {
   const uri = `repos/${owner}/${repo}/commits`;
   const params = {};
-  if (branch !== undefined) params.sha = encodeURIComponent(branch);
+  if (branch !== undefined) params.sha = branch;
   if (since !== undefined) params.since = since;
   if (until !== undefined) params.until = until;
   if (page !== undefined) params.page = page;
