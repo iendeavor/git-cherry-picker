@@ -115,7 +115,16 @@ export const getBranches = ({ owner, repo }) => {
     });
 };
 
-export const getTags = () => {
-  console.error("Not implemented");
-  return Promise.resolve([]);
+export const getTags = ({ owner, repo }) => {
+  const uri = `repos/${owner}/${repo}/tags`;
+  const params = {};
+
+  return Axios.get(uri, { params })
+    .then(async response => {
+      return response.data;
+    })
+    .catch(err => {
+      error(err);
+      return [];
+    });
 };
