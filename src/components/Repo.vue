@@ -40,7 +40,9 @@ export default {
           .then(response => {
             if (this.owner === owner)
               this.repos = response.map(item => ({
-                text: item.name,
+                text:
+                  item.name +
+                  (item.isUser ? " (user)" : item.isOrg ? " (org)" : ""),
                 value:
                   this.$store.state.host === "github" ? item.name : item.id,
               }));
